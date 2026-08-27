@@ -6,7 +6,7 @@
   'use strict';
 
   var STORE_KEY = 'dailyApp.v1';
-  var APP_VERSION = '2026.08.27.7';
+  var APP_VERSION = '2026.08.27.8';
 
   /* ---------------- pillar / task definitions ---------------- */
   var PILLARS = [
@@ -79,7 +79,7 @@
 
   function blankState() {
     return {
-      profile: { name: '', sub: '' },
+      profile: { name: '' },
       days: {},      // key -> { tasks: {}, gratitude: [], journal: [] }
       goals: [],
       prayers: []
@@ -210,7 +210,6 @@
     var name = (state.profile.name || '').trim();
     $('userName').textContent = name || 'Name';
     $('userName').classList.toggle('placeholder', !name);
-    $('userSub').textContent = name ? state.profile.sub : '';
     $('avatar').textContent = name ? name.charAt(0).toUpperCase() : '';
     $('totalPoints').textContent = totalPoints();
     $('streakCount').textContent = streak();
@@ -698,8 +697,7 @@
   }
 
   function setName(name) {
-    state.profile.name = name;
-    state.profile.sub = name ? name.charAt(0).toUpperCase() : '';
+    state.profile.name = name;   // the avatar already shows the initial
     save(); renderHeader(); refreshSheet();
   }
 

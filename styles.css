@@ -85,7 +85,6 @@ button { cursor: pointer; }
 }
 
 .who-name { font-size: 21px; font-weight: 800; letter-spacing: .2px; line-height: 1.1; min-height: 23px; }
-.who-sub  { font-size: 13px; color: var(--text-faint); min-height: 17px; }
 
 .badges { display: flex; gap: 7px; align-items: center; }
 

@@ -16,3 +16,4 @@ node_modules/
 .clear.mjs
 .nm.mjs
 .nmshot.mjs
+.hdr.mjs

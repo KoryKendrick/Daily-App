@@ -96,7 +96,6 @@ button { cursor: pointer; }
 }
 
 .who-name { font-size: 21px; font-weight: 800; letter-spacing: .2px; line-height: 1.1; min-height: 23px; }
-.who-sub  { font-size: 13px; color: var(--text-faint); min-height: 17px; }
 
 .badges { display: flex; gap: 7px; align-items: center; }
 
@@ -658,7 +657,6 @@ button { cursor: pointer; }
       <div class="avatar" id="avatar"></div>
       <div class="who-text">
         <div class="who-name" id="userName"></div>
-        <div class="who-sub" id="userSub"></div>
       </div>
     </div>
 
@@ -833,7 +831,7 @@ button { cursor: pointer; }
   'use strict';
 
   var STORE_KEY = 'dailyApp.v1';
-  var APP_VERSION = '2026.08.27.7';
+  var APP_VERSION = '2026.08.27.8';
 
   /* ---------------- pillar / task definitions ---------------- */
   var PILLARS = [
@@ -906,7 +904,7 @@ button { cursor: pointer; }
 
   function blankState() {
     return {
-      profile: { name: '', sub: '' },
+      profile: { name: '' },
       days: {},      // key -> { tasks: {}, gratitude: [], journal: [] }
       goals: [],
       prayers: []
@@ -1037,7 +1035,6 @@ button { cursor: pointer; }
     var name = (state.profile.name || '').trim();
     $('userName').textContent = name || 'Name';
     $('userName').classList.toggle('placeholder', !name);
-    $('userSub').textContent = name ? state.profile.sub : '';
     $('avatar').textContent = name ? name.charAt(0).toUpperCase() : '';
     $('totalPoints').textContent = totalPoints();
     $('streakCount').textContent = streak();
@@ -1525,8 +1522,7 @@ button { cursor: pointer; }
   }
 
   function setName(name) {
-    state.profile.name = name;
-    state.profile.sub = name ? name.charAt(0).toUpperCase() : '';
+    state.profile.name = name;   // the avatar already shows the initial
     save(); renderHeader(); refreshSheet();
   }
 
