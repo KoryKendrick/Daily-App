@@ -6,6 +6,7 @@
   'use strict';
 
   var STORE_KEY = 'dailyApp.v1';
+  var APP_VERSION = '2026.08.27.7';
 
   /* ---------------- pillar / task definitions ---------------- */
   var PILLARS = [
@@ -205,9 +206,10 @@
 
   /* ---------------- rendering ---------------- */
   function renderHeader() {
-    // blank until a name is set from the menu
+    // shows a muted "Name" prompt until one is set
     var name = (state.profile.name || '').trim();
-    $('userName').textContent = name;
+    $('userName').textContent = name || 'Name';
+    $('userName').classList.toggle('placeholder', !name);
     $('userSub').textContent = name ? state.profile.sub : '';
     $('avatar').textContent = name ? name.charAt(0).toUpperCase() : '';
     $('totalPoints').textContent = totalPoints();
@@ -687,19 +689,35 @@
     body.appendChild(t3);
 
     var list3 = el('div', 'menu-list');
-    list3.appendChild(menuItem('&#128100;', 'Your name', state.profile.name || 'Not set', function () {
-      openModal('Your name', state.profile.name, function (val) {
-        var name = val.replace(/\s+/g, ' ').trim();   // a name is one line
-        state.profile.name = name;                     // empty clears it again
-        state.profile.sub = name ? name.charAt(0).toUpperCase() : '';
-        save(); renderHeader(); refreshSheet();
-        toast(name ? 'Name updated' : 'Name cleared');
-      }, {
-        allowEmpty: true,
-        placeholder: 'Leave empty to show no name'
-      });
-    }));
+    list3.appendChild(menuItem('&#128100;', 'Your name', state.profile.name || 'Not set', editName));
+
+    var version = el('div', 'menu-version');
+    version.textContent = 'Version ' + APP_VERSION;
+    body.appendChild(version);
     body.appendChild(list3);
+  }
+
+  function setName(name) {
+    state.profile.name = name;
+    state.profile.sub = name ? name.charAt(0).toUpperCase() : '';
+    save(); renderHeader(); refreshSheet();
+  }
+
+  function editName() {
+    openModal('Your name', state.profile.name, function (val) {
+      var name = val.replace(/\s+/g, ' ').trim();   // a name is one line
+      setName(name);
+      toast(name ? 'Name updated' : 'Name cleared');
+    }, {
+      allowEmpty: true,
+      placeholder: 'Type your name, or use Clear to show none',
+      extraLabel: 'Clear',
+      onExtra: function () {
+        setName('');
+        closeModal();
+        toast('Name cleared');
+      }
+    });
   }
 
   /* Builds [{ key, label, items }] newest period first, newest item first. */
@@ -972,6 +990,8 @@
     $('menuBtn').addEventListener('click', function () {
       openSheet({ type: 'menu' });
     });
+
+    document.querySelector('.who').addEventListener('click', editName);
 
     $('sheetBack').addEventListener('click', sheetBack);
     $('sheetClose').addEventListener('click', closeSheet);

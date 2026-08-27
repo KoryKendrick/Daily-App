@@ -48,9 +48,13 @@ prayers stay editable, so one answered months later can still be marked.
 Journal Archive, plus your name — blank on a new install until you set it there,
 and blank again if you clear the field.
 
+Until a name is set the header reads a muted **Name**. Tap it (or the menu row)
+to open the dialog, which has a **Clear** button to go back to that prompt.
+
 Your name lives in the browser's storage for the site, alongside your entries.
-Reinstalling the home-screen shortcut does not reset it; clear it from the menu
-instead, which leaves your check-ins alone. Nothing is ever deleted by archiving — what
+Reinstalling the home-screen shortcut does not reset it — clear it from the
+dialog instead, which leaves your check-ins alone. The menu shows the running
+version, so you can tell whether a device has picked up the latest deploy. Nothing is ever deleted by archiving — what
 leaves the home screen is always in a log.
 
 **Search** filters goals, prayers, and today's gratitude/journal entries, and

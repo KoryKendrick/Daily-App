@@ -71,7 +71,8 @@ button { cursor: pointer; }
 }
 .menu-btn span:nth-child(2) { width: 80%; }
 
-.who { display: flex; align-items: center; gap: 9px; min-width: 0; flex: 1; }
+.who { display: flex; align-items: center; gap: 9px; min-width: 0; flex: 1; cursor: pointer; }
+.who-name.placeholder { color: var(--text-faint); font-weight: 700; }
 
 .avatar {
   width: 42px; height: 42px; flex: 0 0 42px;
@@ -624,3 +625,9 @@ button { cursor: pointer; }
 }
 .log-link:active { opacity: .7; }
 .block-head .section-title.left { margin: 0; }
+
+.menu-version {
+  text-align: center;
+  font-size: 12px; color: var(--text-faint);
+  margin: 22px 0 4px;
+}
