@@ -5,3 +5,4 @@ node_modules/
 .verify*.mjs
 .shot*.mjs
 .zoom.mjs
+.sw*.mjs

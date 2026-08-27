@@ -81,6 +81,10 @@ menu → *Install app*. It then opens full-screen like a native app and works
 offline — a service worker (`sw.js`) caches the files, and the web app manifest
 supplies the icon and theme.
 
+Updates arrive on their own: the service worker fetches from the network first
+and only falls back to its cache when there's no connection, so opening the app
+after a push shows the new version. There is no need to clear anything.
+
 ## Files
 
 ```
