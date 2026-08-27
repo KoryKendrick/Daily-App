@@ -497,7 +497,8 @@ button { cursor: pointer; }
   border-radius: var(--radius-sm); padding: 11px 12px; outline: none; resize: vertical; font-size: 15px;
 }
 .modal textarea:focus { border-color: var(--gold-dim-1); }
-.modal-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 12px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 12px; flex-wrap: wrap; }
+.modal-actions [hidden] { display: none !important; }
 
 .toast {
   position: fixed; left: 50%; bottom: calc(var(--tab-h) + 16px);

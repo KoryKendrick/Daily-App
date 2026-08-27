@@ -2,3 +2,4 @@ node_modules/
 .DS_Store
 *.log
 .shot*.mjs
+.verify*.mjs
