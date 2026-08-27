@@ -312,8 +312,169 @@
     renderHeader();
   }
 
+  /* ---------------- periods ----------------
+     Archiving is derived from each entry's own date rather than moved by a
+     scheduled sweep: the home screen shows the current period and the logs
+     show everything. A week that ends while the app is closed still archives
+     correctly, and nothing can be lost to a migration that did not run. */
+
+  function currentWeekStart() { return startOfWeek(new Date()); }
+
+  function inCurrentWeek(ts) {
+    var ws = currentWeekStart();
+    return ts >= ws.getTime() && ts < addDays(ws, 7).getTime();
+  }
+
+  function weekKeyOf(ts) { return keyOf(startOfWeek(new Date(ts))); }
+
+  function weekGroupLabel(weekKey) {
+    var start = parseKey(weekKey);
+    var end = addDays(start, 6);
+    var span = start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) +
+      ' – ' + end.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    return { now: weekKey === keyOf(currentWeekStart()) ? 'This week' : '', text: span };
+  }
+
+  function dayGroupLabel(dayKey) {
+    var d = parseKey(dayKey);
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    return {
+      now: sameDay(d, today) ? 'Today' : '',
+      text: d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })
+    };
+  }
+
+  /* ---------------- shared entry rows ---------------- */
+
+  function bonusEntryNode(kind, entry, dayKey, onChange) {
+    var li = el('li', 'entry');
+    var main = el('div', 'entry-main');
+
+    var title = el('div', 'entry-title');
+    title.textContent = kind === 'gratitude' ? 'Gratitude' : 'Journal';
+    var body = el('div', 'entry-body');
+    body.textContent = entry.text;
+    var meta = el('div', 'entry-meta');
+    meta.innerHTML = '<span class="tag ' + (kind === 'gratitude' ? 'family' : 'finance') + '">' +
+      kind + '</span><span>' + fmtShort(entry.ts) + '</span>';
+    main.appendChild(title); main.appendChild(body); main.appendChild(meta);
+
+    var actions = el('div', 'entry-actions');
+    var edit = el('button', 'mini-btn');
+    edit.type = 'button'; edit.textContent = 'Edit';
+    edit.addEventListener('click', function () {
+      openModal(kind === 'gratitude' ? 'Edit gratitude' : 'Edit journal', entry.text, function (val) {
+        entry.text = val; save(); onChange();
+      });
+    });
+    var del = el('button', 'mini-btn danger');
+    del.type = 'button'; del.textContent = 'Delete';
+    del.addEventListener('click', function () {
+      var arr = day(dayKey)[kind];
+      var i = arr.findIndex(function (x) { return x.id === entry.id; });
+      if (i > -1) arr.splice(i, 1);
+      save(); onChange();
+    });
+    actions.appendChild(edit); actions.appendChild(del);
+
+    li.appendChild(main); li.appendChild(actions);
+    return li;
+  }
+
+  function goalEntryNode(g, onChange) {
+    var li = el('li', 'entry' + (g.done ? ' done' : ''));
+
+    var chk = el('button', 'entry-check');
+    chk.type = 'button';
+    chk.setAttribute('aria-label', 'Toggle goal complete');
+    chk.setAttribute('aria-pressed', g.done ? 'true' : 'false');
+    chk.innerHTML = CHECK_SVG;
+    chk.addEventListener('click', function () {
+      g.done = !g.done;
+      g.completedAt = g.done ? Date.now() : null;
+      save(); onChange();
+    });
+
+    var main = el('div', 'entry-main');
+    var title = el('div', 'entry-title');
+    title.textContent = g.text;
+    var meta = el('div', 'entry-meta');
+    meta.innerHTML = '<span class="tag ' + escapeHtml(g.pillar) + '">' + escapeHtml(g.pillar) + '</span>' +
+      '<span>Added ' + fmtShort(g.createdAt) + '</span>' +
+      (g.done && g.completedAt ? '<span class="tag answered">done ' + fmtShort(g.completedAt) + '</span>' : '');
+    main.appendChild(title); main.appendChild(meta);
+
+    var actions = el('div', 'entry-actions');
+    var edit = el('button', 'mini-btn');
+    edit.type = 'button'; edit.textContent = 'Edit';
+    edit.addEventListener('click', function () {
+      openModal('Edit goal', g.text, function (val) { g.text = val; save(); onChange(); });
+    });
+    var del = el('button', 'mini-btn danger');
+    del.type = 'button'; del.textContent = 'Delete';
+    del.addEventListener('click', function () {
+      state.goals = state.goals.filter(function (x) { return x.id !== g.id; });
+      save(); onChange(); toast('Goal deleted');
+    });
+    actions.appendChild(edit); actions.appendChild(del);
+
+    li.appendChild(chk); li.appendChild(main); li.appendChild(actions);
+    return li;
+  }
+
+  function prayerEntryNode(p, onChange) {
+    var li = el('li', 'entry' + (p.answered ? ' done' : ''));
+
+    var chk = el('button', 'entry-check');
+    chk.type = 'button';
+    chk.setAttribute('aria-label', 'Mark prayer answered');
+    chk.setAttribute('aria-pressed', p.answered ? 'true' : 'false');
+    chk.innerHTML = CHECK_SVG;
+    chk.addEventListener('click', function () {
+      p.answered = !p.answered;
+      p.answeredAt = p.answered ? Date.now() : null;
+      save(); onChange();
+      if (p.answered) toast('Marked answered \u{1F64F}');
+    });
+
+    var main = el('div', 'entry-main');
+    if (p.title) {
+      var title = el('div', 'entry-title');
+      title.textContent = p.title;
+      main.appendChild(title);
+    }
+    var body = el('div', 'entry-body');
+    body.textContent = p.text;
+    main.appendChild(body);
+
+    var meta = el('div', 'entry-meta');
+    meta.innerHTML = '<span>' + fmtShort(p.ts) + '</span>' +
+      (p.answered && p.answeredAt ? '<span class="tag answered">answered ' + fmtShort(p.answeredAt) + '</span>' : '');
+    main.appendChild(meta);
+
+    var actions = el('div', 'entry-actions');
+    var edit = el('button', 'mini-btn');
+    edit.type = 'button'; edit.textContent = 'Edit';
+    edit.addEventListener('click', function () {
+      openModal('Edit prayer', p.text, function (val) { p.text = val; save(); onChange(); });
+    });
+    var del = el('button', 'mini-btn danger');
+    del.type = 'button'; del.textContent = 'Delete';
+    del.addEventListener('click', function () {
+      state.prayers = state.prayers.filter(function (x) { return x.id !== p.id; });
+      save(); onChange(); toast('Prayer deleted');
+    });
+    actions.appendChild(edit); actions.appendChild(del);
+
+    li.appendChild(chk); li.appendChild(main); li.appendChild(actions);
+    return li;
+  }
+
+  /* ---------------- home lists ---------------- */
+
   function renderBonus() {
-    var d = day(keyOf(viewDate));
+    var key = keyOf(viewDate);
+    var d = day(key);
 
     var gc = $('gratitudeCount'), jc = $('journalCount');
     var hasGratitude = d.gratitude.length > 0;
@@ -340,29 +501,9 @@
       .sort(function (a, b) { return b.e.ts - a.e.ts; });
 
     items.forEach(function (it) {
-      var li = el('li', 'entry');
-      var main = el('div', 'entry-main');
-      var title = el('div', 'entry-title');
-      title.textContent = it.kind === 'gratitude' ? 'Gratitude' : 'Journal';
-      var body = el('div', 'entry-body');
-      body.textContent = it.e.text;
-      var meta = el('div', 'entry-meta');
-      meta.innerHTML = '<span class="tag ' + (it.kind === 'gratitude' ? 'family' : 'finance') + '">' + it.kind + '</span><span>' + fmtShort(it.e.ts) + '</span>';
-      main.appendChild(title); main.appendChild(body); main.appendChild(meta);
-
-      var actions = el('div', 'entry-actions');
-      var del = el('button', 'mini-btn danger');
-      del.type = 'button'; del.textContent = 'Delete';
-      del.addEventListener('click', function () {
-        var arr = it.kind === 'gratitude' ? d.gratitude : d.journal;
-        var i = arr.findIndex(function (x) { return x.id === it.e.id; });
-        if (i > -1) arr.splice(i, 1);
-        save(); renderBonus(); renderChart(); renderHeader();
-      });
-      actions.appendChild(del);
-
-      li.appendChild(main); li.appendChild(actions);
-      list.appendChild(li);
+      list.appendChild(bonusEntryNode(it.kind, it.e, key, function () {
+        renderBonus(); renderChart(); renderHeader();
+      }));
     });
   }
 
@@ -371,120 +512,259 @@
     return String(text || '').toLowerCase().indexOf(query) > -1;
   }
 
-  /* ---------------- goals ---------------- */
+  /* ---------------- goals (this week) ---------------- */
   function renderGoals() {
     var list = $('goalList');
     list.innerHTML = '';
 
-    var visible = state.goals.filter(function (g) { return matches(g.text) || matches(g.pillar); });
-    var doneCount = state.goals.filter(function (g) { return g.done; }).length;
-    $('goalMeta').textContent = doneCount + '/' + state.goals.length + ' complete';
+    var week = state.goals.filter(function (g) { return inCurrentWeek(g.createdAt); });
+    var visible = week.filter(function (g) { return matches(g.text) || matches(g.pillar); });
+    var doneCount = week.filter(function (g) { return g.done; }).length;
+    $('goalMeta').textContent = doneCount + '/' + week.length + ' this week';
 
     if (!visible.length) {
-      var e = el('li'); e.innerHTML = '<div class="empty">' + (state.goals.length ? 'No goals match your search.' : 'No goals yet — type one above to get started.') + '</div>';
+      var e = el('li');
+      e.innerHTML = '<div class="empty">' + (week.length
+        ? 'No goals match your search.'
+        : (state.goals.length
+            ? 'No goals yet this week — earlier ones are in the Goals Log.'
+            : 'No goals yet — type one above to get started.')) + '</div>';
       list.appendChild(e);
       return;
     }
 
-    visible.forEach(function (g) {
-      var li = el('li', 'entry' + (g.done ? ' done' : ''));
-
-      var chk = el('button', 'entry-check');
-      chk.type = 'button';
-      chk.setAttribute('aria-label', 'Toggle goal complete');
-      chk.setAttribute('aria-pressed', g.done ? 'true' : 'false');
-      chk.innerHTML = CHECK_SVG;
-      chk.addEventListener('click', function () {
-        g.done = !g.done;
-        g.completedAt = g.done ? Date.now() : null;
-        save(); renderGoals();
+    visible.slice().sort(function (a, b) { return b.createdAt - a.createdAt; })
+      .forEach(function (g) {
+        list.appendChild(goalEntryNode(g, function () { renderGoals(); refreshSheet(); }));
       });
-
-      var main = el('div', 'entry-main');
-      var title = el('div', 'entry-title');
-      title.textContent = g.text;
-      var meta = el('div', 'entry-meta');
-      meta.innerHTML = '<span class="tag ' + escapeHtml(g.pillar) + '">' + escapeHtml(g.pillar) + '</span><span>Added ' + fmtShort(g.createdAt) + '</span>' +
-        (g.done && g.completedAt ? '<span class="tag answered">done ' + fmtShort(g.completedAt) + '</span>' : '');
-      main.appendChild(title); main.appendChild(meta);
-
-      var actions = el('div', 'entry-actions');
-      var edit = el('button', 'mini-btn'); edit.type = 'button'; edit.textContent = 'Edit';
-      edit.addEventListener('click', function () {
-        openModal('Edit goal', g.text, function (val) { g.text = val; save(); renderGoals(); });
-      });
-      var del = el('button', 'mini-btn danger'); del.type = 'button'; del.textContent = 'Delete';
-      del.addEventListener('click', function () {
-        state.goals = state.goals.filter(function (x) { return x.id !== g.id; });
-        save(); renderGoals(); toast('Goal deleted');
-      });
-      actions.appendChild(edit); actions.appendChild(del);
-
-      li.appendChild(chk); li.appendChild(main); li.appendChild(actions);
-      list.appendChild(li);
-    });
   }
 
-  /* ---------------- prayers ---------------- */
+  /* ---------------- prayers (this week) ---------------- */
   function renderPrayers() {
     var list = $('prayerList');
     list.innerHTML = '';
 
-    var visible = state.prayers.filter(function (p) { return matches(p.title) || matches(p.text); });
-    var answered = state.prayers.filter(function (p) { return p.answered; }).length;
-    $('prayerMeta').textContent = answered + ' answered · ' + state.prayers.length + ' total';
+    var week = state.prayers.filter(function (p) { return inCurrentWeek(p.ts); });
+    var visible = week.filter(function (p) { return matches(p.title) || matches(p.text); });
+    var answered = week.filter(function (p) { return p.answered; }).length;
+    $('prayerMeta').textContent = answered + ' answered · ' + week.length + ' this week';
 
     if (!visible.length) {
       var e = el('li');
-      e.innerHTML = '<div class="empty">' + (state.prayers.length ? 'No prayers match your search.' : 'No prayers yet — write one above.') + '</div>';
+      e.innerHTML = '<div class="empty">' + (week.length
+        ? 'No prayers match your search.'
+        : (state.prayers.length
+            ? 'No prayers yet this week — earlier ones are in the Prayer Log.'
+            : 'No prayers yet — write one above.')) + '</div>';
       list.appendChild(e);
       return;
     }
 
-    visible.slice().sort(function (a, b) { return b.ts - a.ts; }).forEach(function (p) {
-      var li = el('li', 'entry' + (p.answered ? ' done' : ''));
-
-      var chk = el('button', 'entry-check');
-      chk.type = 'button';
-      chk.setAttribute('aria-label', 'Mark prayer answered');
-      chk.setAttribute('aria-pressed', p.answered ? 'true' : 'false');
-      chk.innerHTML = CHECK_SVG;
-      chk.addEventListener('click', function () {
-        p.answered = !p.answered;
-        p.answeredAt = p.answered ? Date.now() : null;
-        save(); renderPrayers();
-        if (p.answered) toast('Marked answered \u{1F64F}');
+    visible.slice().sort(function (a, b) { return b.ts - a.ts; })
+      .forEach(function (p) {
+        list.appendChild(prayerEntryNode(p, function () { renderPrayers(); refreshSheet(); }));
       });
+  }
 
-      var main = el('div', 'entry-main');
-      if (p.title) {
-        var title = el('div', 'entry-title');
-        title.textContent = p.title;
-        main.appendChild(title);
-      }
-      var body = el('div', 'entry-body');
-      body.textContent = p.text;
-      main.appendChild(body);
+  /* ---------------- menu and logs ----------------
+     The sheet stacks: Menu -> a log. Back steps up one level. */
 
-      var meta = el('div', 'entry-meta');
-      meta.innerHTML = '<span>' + fmtShort(p.ts) + '</span>' +
-        (p.answered && p.answeredAt ? '<span class="tag answered">answered ' + fmtShort(p.answeredAt) + '</span>' : '');
-      main.appendChild(meta);
+  var LOGS = {
+    goals:     { title: 'Goals Log',         period: 'week' },
+    prayers:   { title: 'Prayer Log',        period: 'week' },
+    gratitude: { title: 'Gratitude Archive', period: 'day', kinds: ['gratitude'] },
+    journal:   { title: 'Journal Archive',   period: 'day', kinds: ['journal'] },
+    bonus:     { title: 'Bonus Archive',     period: 'day', kinds: ['gratitude', 'journal'] }
+  };
 
-      var actions = el('div', 'entry-actions');
-      var edit = el('button', 'mini-btn'); edit.type = 'button'; edit.textContent = 'Edit';
-      edit.addEventListener('click', function () {
-        openModal('Edit prayer', p.text, function (val) { p.text = val; save(); renderPrayers(); });
+  var sheetStack = [];
+
+  function openSheet(view) { sheetStack.push(view); renderSheet(); }
+
+  function closeSheet() {
+    sheetStack = [];
+    $('sheet').hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  function sheetBack() {
+    sheetStack.pop();
+    if (!sheetStack.length) closeSheet();
+    else renderSheet();
+  }
+
+  // keeps an open log in step with edits made anywhere
+  function refreshSheet() { if (sheetStack.length) renderSheet(); }
+
+  function renderSheet() {
+    var view = sheetStack[sheetStack.length - 1];
+    if (!view) return closeSheet();
+
+    $('sheet').hidden = false;
+    document.body.style.overflow = 'hidden';
+    $('sheetBack').hidden = sheetStack.length < 2;
+
+    var body = $('sheetBody');
+    body.innerHTML = '';
+
+    if (view.type === 'menu') {
+      $('sheetTitle').textContent = 'Menu';
+      renderMenu(body);
+    } else {
+      $('sheetTitle').textContent = LOGS[view.log].title;
+      renderLog(body, view.log);
+    }
+  }
+
+  function menuItem(icon, title, sub, onClick) {
+    var b = el('button', 'menu-item');
+    b.type = 'button';
+    b.innerHTML = '<span class="menu-ico">' + icon + '</span>' +
+      '<span class="menu-label"><span class="menu-title">' + escapeHtml(title) + '</span>' +
+      '<span class="menu-sub">' + escapeHtml(sub) + '</span></span>' +
+      '<span class="menu-chev">&#8250;</span>';
+    b.addEventListener('click', onClick);
+    return b;
+  }
+
+  function countWeeks(items, tsOf) {
+    var weeks = {};
+    items.forEach(function (i) { weeks[weekKeyOf(tsOf(i))] = true; });
+    return Object.keys(weeks).length;
+  }
+
+  function bonusTotals(kind) {
+    var entries = 0, days = 0;
+    Object.keys(state.days).forEach(function (k) {
+      var n = (state.days[k][kind] || []).length;
+      if (n) { entries += n; days++; }
+    });
+    return { entries: entries, days: days };
+  }
+
+  function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
+
+  function renderMenu(body) {
+    var t1 = el('div', 'menu-section-title');
+    t1.textContent = 'Logs';
+    body.appendChild(t1);
+
+    var list = el('div', 'menu-list');
+
+    list.appendChild(menuItem('&#128591;', 'Prayer Log',
+      plural(state.prayers.length, 'prayer', 'prayers') + ' · ' +
+      plural(countWeeks(state.prayers, function (p) { return p.ts; }), 'week', 'weeks'),
+      function () { openSheet({ type: 'log', log: 'prayers' }); }));
+
+    list.appendChild(menuItem('&#127919;', 'Goals Log',
+      plural(state.goals.length, 'goal', 'goals') + ' · ' +
+      plural(countWeeks(state.goals, function (g) { return g.createdAt; }), 'week', 'weeks'),
+      function () { openSheet({ type: 'log', log: 'goals' }); }));
+
+    body.appendChild(list);
+
+    var t2 = el('div', 'menu-section-title');
+    t2.textContent = 'Archives';
+    body.appendChild(t2);
+
+    var list2 = el('div', 'menu-list');
+    var g = bonusTotals('gratitude'), jr = bonusTotals('journal');
+
+    list2.appendChild(menuItem('&#10084;&#65039;', 'Gratitude Archive',
+      plural(g.entries, 'entry', 'entries') + ' · ' + plural(g.days, 'day', 'days'),
+      function () { openSheet({ type: 'log', log: 'gratitude' }); }));
+
+    list2.appendChild(menuItem('&#128221;', 'Journal Archive',
+      plural(jr.entries, 'entry', 'entries') + ' · ' + plural(jr.days, 'day', 'days'),
+      function () { openSheet({ type: 'log', log: 'journal' }); }));
+
+    body.appendChild(list2);
+
+    var t3 = el('div', 'menu-section-title');
+    t3.textContent = 'Settings';
+    body.appendChild(t3);
+
+    var list3 = el('div', 'menu-list');
+    list3.appendChild(menuItem('&#128100;', 'Your name', state.profile.name, function () {
+      openModal('Your name', state.profile.name, function (val) {
+        state.profile.name = val;
+        state.profile.sub = val.charAt(0).toUpperCase();
+        save(); renderHeader(); refreshSheet();
       });
-      var del = el('button', 'mini-btn danger'); del.type = 'button'; del.textContent = 'Delete';
-      del.addEventListener('click', function () {
-        state.prayers = state.prayers.filter(function (x) { return x.id !== p.id; });
-        save(); renderPrayers(); toast('Prayer deleted');
-      });
-      actions.appendChild(edit); actions.appendChild(del);
+    }));
+    body.appendChild(list3);
+  }
 
-      li.appendChild(chk); li.appendChild(main); li.appendChild(actions);
-      list.appendChild(li);
+  /* Builds [{ key, label, items }] newest period first, newest item first. */
+  function logGroups(type) {
+    var cfg = LOGS[type];
+    var buckets = {};
+
+    function put(key, item) {
+      if (!buckets[key]) buckets[key] = [];
+      buckets[key].push(item);
+    }
+
+    if (type === 'goals') {
+      state.goals.filter(function (g) { return matches(g.text) || matches(g.pillar); })
+        .forEach(function (g) { put(weekKeyOf(g.createdAt), { ts: g.createdAt, goal: g }); });
+    } else if (type === 'prayers') {
+      state.prayers.filter(function (p) { return matches(p.title) || matches(p.text); })
+        .forEach(function (p) { put(weekKeyOf(p.ts), { ts: p.ts, prayer: p }); });
+    } else {
+      Object.keys(state.days).forEach(function (dayKey) {
+        cfg.kinds.forEach(function (kind) {
+          (state.days[dayKey][kind] || []).forEach(function (e) {
+            if (matches(e.text)) put(dayKey, { ts: e.ts, kind: kind, entry: e, dayKey: dayKey });
+          });
+        });
+      });
+    }
+
+    return Object.keys(buckets).sort().reverse().map(function (key) {
+      return {
+        key: key,
+        label: cfg.period === 'week' ? weekGroupLabel(key) : dayGroupLabel(key),
+        items: buckets[key].sort(function (a, b) { return b.ts - a.ts; })
+      };
+    });
+  }
+
+  function renderLog(body, type) {
+    var groups = logGroups(type);
+
+    if (!groups.length) {
+      var empty = el('div', 'empty');
+      empty.textContent = query
+        ? 'Nothing here matches your search.'
+        : 'Nothing here yet. Entries appear as soon as you add them on the home screen.';
+      body.appendChild(empty);
+      return;
+    }
+
+    var onChange = function () { renderAll(); };
+
+    groups.forEach(function (group) {
+      var section = el('section', 'log-group');
+
+      var head = el('div', 'log-group-head');
+      var title = el('div', 'log-group-title');
+      title.innerHTML = (group.label.now ? '<span class="now">' + group.label.now + '</span> · ' : '') +
+        escapeHtml(group.label.text);
+      var count = el('div', 'log-group-count');
+      count.textContent = plural(group.items.length, 'entry', 'entries');
+      head.appendChild(title); head.appendChild(count);
+      section.appendChild(head);
+
+      var ul = el('ul', 'entry-list');
+      group.items.forEach(function (it) {
+        if (it.goal) ul.appendChild(goalEntryNode(it.goal, onChange));
+        else if (it.prayer) ul.appendChild(prayerEntryNode(it.prayer, onChange));
+        else ul.appendChild(bonusEntryNode(it.kind, it.entry, it.dayKey, onChange));
+      });
+      section.appendChild(ul);
+
+      body.appendChild(section);
     });
   }
 
@@ -496,6 +776,7 @@
     renderBonus();
     renderGoals();
     renderPrayers();
+    refreshSheet();
   }
 
   /* ---------------- modal + toast ---------------- */
@@ -645,7 +926,9 @@
     });
     $('modal').addEventListener('click', function (e) { if (e.target === $('modal')) closeModal(); });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && !$('modal').hidden) closeModal();
+      if (e.key !== 'Escape') return;
+      if (!$('modal').hidden) closeModal();
+      else if (!$('sheet').hidden) sheetBack();
     });
 
     $('goalForm').addEventListener('submit', function (e) {
@@ -676,15 +959,21 @@
 
     $('searchInput').addEventListener('input', function (e) {
       query = e.target.value.trim().toLowerCase();
-      renderGoals(); renderPrayers(); renderBonus();
+      renderGoals(); renderPrayers(); renderBonus(); refreshSheet();
     });
 
     $('menuBtn').addEventListener('click', function () {
-      var name = prompt('Your name', state.profile.name);
-      if (name === null) return;
-      state.profile.name = name.trim() || 'Friend';
-      state.profile.sub = state.profile.name.trim().charAt(0).toUpperCase();
-      save(); renderHeader();
+      openSheet({ type: 'menu' });
+    });
+
+    $('sheetBack').addEventListener('click', sheetBack);
+    $('sheetClose').addEventListener('click', closeSheet);
+
+    document.querySelectorAll('.log-link').forEach(function (link) {
+      link.addEventListener('click', function () {
+        openSheet({ type: 'menu' });
+        openSheet({ type: 'log', log: link.dataset.log });
+      });
     });
 
     document.querySelectorAll('.tab').forEach(function (tab) {

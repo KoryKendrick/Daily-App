@@ -23,7 +23,8 @@ A pillar turns lime when both of its boxes are checked, and its counter flips to
 
 **Bonus points** — *Add Gratitude* and *Add Journal*, one bonus point each per
 day. Both stay unlit until that day has an entry, then fill in like a checked
-pillar box and show how many entries you wrote.
+pillar box and show how many entries you wrote. The home screen shows the day
+you're viewing; every past day is in the archives under the menu, newest first.
 
 **Tracked progress**
 - 1 point per checkbox + 1 per bonus type = **10 points max per day**.
@@ -34,12 +35,21 @@ pillar box and show how many entries you wrote.
   back to today.
 
 **Goals** — type a goal, tag it to a pillar, check it off when it's done, edit or
-delete it later.
+delete it later. The home screen shows the current week; once a new week starts
+(weeks run Sunday to Saturday) earlier goals move out of the way into the
+**Goals Log** in the menu, grouped by week, newest first, and kept forever.
 
-**Prayers** — write a prayer with an optional "who/what", mark it answered when it
-is, and keep the whole list as a record.
+**Prayers** — write a prayer with an optional "who/what", mark it answered when
+it is, and keep the whole list as a record. Like goals, the home screen shows
+this week and everything older lives in the **Prayer Log** in the menu. Archived
+prayers stay editable, so one answered months later can still be marked.
 
-**Search** filters goals, prayers, and today's gratitude/journal entries.
+**Menu** (the ☰ button) holds the Prayer Log, Goals Log, Gratitude Archive and
+Journal Archive, plus your name. Nothing is ever deleted by archiving — what
+leaves the home screen is always in a log.
+
+**Search** filters goals, prayers, and today's gratitude/journal entries, and
+filters an open log too.
 
 **Export / Import / Reset** at the bottom of the page. Export shows your data as
 JSON with a **Copy** button and a **Save file** button; import accepts either a

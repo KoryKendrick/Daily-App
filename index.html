@@ -79,7 +79,10 @@
     <div id="pillars" class="pillars"></div>
 
     <!-- ============ BONUS ============ -->
-    <h2 class="section-title left">Bonus Points</h2>
+    <div class="block-head">
+      <h2 class="section-title left">Bonus Points</h2>
+      <button class="log-link" data-log="bonus" type="button">Archive</button>
+    </div>
     <div class="bonus-row">
       <button class="bonus-btn" id="gratitudeBtn">
         <span class="bonus-ico">
@@ -102,7 +105,10 @@
     <section class="block">
       <div class="block-head">
         <h2 class="accent">Goals</h2>
-        <span class="block-meta" id="goalMeta">0/0</span>
+        <div class="head-right">
+          <span class="block-meta" id="goalMeta">0/0</span>
+          <button class="log-link" data-log="goals" type="button">Log</button>
+        </div>
       </div>
 
       <form class="composer" id="goalForm" autocomplete="off">
@@ -126,7 +132,10 @@
     <section class="block">
       <div class="block-head">
         <h2 class="accent">Prayers</h2>
-        <span class="block-meta" id="prayerMeta">0 answered</span>
+        <div class="head-right">
+          <span class="block-meta" id="prayerMeta">0 answered</span>
+          <button class="log-link" data-log="prayers" type="button">Log</button>
+        </div>
       </div>
 
       <form class="composer" id="prayerForm" autocomplete="off">
@@ -156,6 +165,16 @@
     <button class="tab" data-scroll="goalForm"><span class="tab-ico">&#127919;</span>Goals</button>
     <button class="tab" data-scroll="prayerForm"><span class="tab-ico">&#128591;</span>Prayer</button>
   </nav>
+</div>
+
+<!-- ============ MENU / LOG SHEET ============ -->
+<div class="sheet" id="sheet" hidden>
+  <header class="sheet-head">
+    <button class="sheet-btn" id="sheetBack" aria-label="Back">&#8249;</button>
+    <h2 id="sheetTitle">Menu</h2>
+    <button class="sheet-btn" id="sheetClose" aria-label="Close">&#10005;</button>
+  </header>
+  <div class="sheet-body" id="sheetBody"></div>
 </div>
 
 <!-- ============ MODAL ============ -->
