@@ -6,7 +6,7 @@
   'use strict';
 
   var STORE_KEY = 'dailyApp.v1';
-  var APP_VERSION = '2026.08.27.9';
+  var APP_VERSION = '2026.08.27.10';
 
   /* ---------------- pillar / task definitions ---------------- */
   var PILLARS = [

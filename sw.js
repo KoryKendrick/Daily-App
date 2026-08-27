@@ -12,7 +12,11 @@ var ASSETS = [
   './app.js',
   './manifest.webmanifest',
   './assets/icon.svg',
-  './assets/icon-maskable.svg'
+  './assets/icon-maskable.svg',
+  './assets/apple-touch-icon.png',
+  './assets/icon-192.png',
+  './assets/icon-512.png',
+  './assets/icon-maskable-512.png'
 ];
 
 self.addEventListener('install', function (e) {

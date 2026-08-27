@@ -18,3 +18,5 @@ node_modules/
 .nmshot.mjs
 .hdr.mjs
 .learn*.mjs
+.icons.mjs
+.ios.mjs
