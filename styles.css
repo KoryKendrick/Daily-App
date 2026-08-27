@@ -496,7 +496,7 @@ button { cursor: pointer; }
 .modal-backdrop[hidden], .toast[hidden] { display: none !important; }
 
 .modal-backdrop {
-  position: fixed; inset: 0; z-index: 50;
+  position: fixed; inset: 0; z-index: 90;
   background: rgba(0,0,0,.65);
   display: grid; place-items: center;
   padding: 20px;
@@ -520,7 +520,7 @@ button { cursor: pointer; }
   transform: translateX(-50%);
   background: #1e2a12; border: 1px solid var(--lime-dim-1); color: var(--lime-1);
   padding: 10px 16px; border-radius: 999px;
-  font-size: 14px; font-weight: 700; z-index: 60;
+  font-size: 14px; font-weight: 700; z-index: 100;
   animation: pop .2s ease;
 }
 @keyframes pop { from { opacity: 0; transform: translate(-50%, 8px); } }

@@ -687,9 +687,12 @@
     var list3 = el('div', 'menu-list');
     list3.appendChild(menuItem('&#128100;', 'Your name', state.profile.name, function () {
       openModal('Your name', state.profile.name, function (val) {
-        state.profile.name = val;
-        state.profile.sub = val.charAt(0).toUpperCase();
+        var name = val.replace(/\s+/g, ' ').trim();   // a name is one line
+        if (!name) { toast('Enter a name'); return false; }
+        state.profile.name = name;
+        state.profile.sub = name.charAt(0).toUpperCase();
         save(); renderHeader(); refreshSheet();
+        toast('Name updated');
       });
     }));
     body.appendChild(list3);

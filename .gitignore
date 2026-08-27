@@ -11,3 +11,4 @@ node_modules/
 .logs.mjs
 .rollover.mjs
 .logshot.mjs
+.rename.mjs
