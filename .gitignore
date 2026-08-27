@@ -6,3 +6,4 @@ node_modules/
 .shot*.mjs
 .zoom.mjs
 .sw*.mjs
+.bonus*.mjs

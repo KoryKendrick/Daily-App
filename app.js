@@ -316,10 +316,19 @@
     var d = day(keyOf(viewDate));
 
     var gc = $('gratitudeCount'), jc = $('journalCount');
+    var hasGratitude = d.gratitude.length > 0;
+    var hasJournal = d.journal.length > 0;
+
     gc.textContent = d.gratitude.length;
-    gc.classList.toggle('show', d.gratitude.length > 0);
+    gc.classList.toggle('show', hasGratitude);
     jc.textContent = d.journal.length;
-    jc.classList.toggle('show', d.journal.length > 0);
+    jc.classList.toggle('show', hasJournal);
+
+    // the buttons only light up once something has actually been written
+    $('gratitudeBtn').classList.toggle('done', hasGratitude);
+    $('gratitudeBtn').setAttribute('aria-pressed', hasGratitude ? 'true' : 'false');
+    $('journalBtn').classList.toggle('done', hasJournal);
+    $('journalBtn').setAttribute('aria-pressed', hasJournal ? 'true' : 'false');
 
     var list = $('bonusList');
     list.innerHTML = '';

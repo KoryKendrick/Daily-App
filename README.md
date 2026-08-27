@@ -21,7 +21,9 @@ your data stays in your own browser (`localStorage`).
 A pillar turns lime when both of its boxes are checked, and its counter flips to
 `✓✓ 2/2`.
 
-**Bonus points** — *Add Gratitude* and *Add Journal*, one bonus point each per day.
+**Bonus points** — *Add Gratitude* and *Add Journal*, one bonus point each per
+day. Both stay unlit until that day has an entry, then fill in like a checked
+pillar box and show how many entries you wrote.
 
 **Tracked progress**
 - 1 point per checkbox + 1 per bonus type = **10 points max per day**.
