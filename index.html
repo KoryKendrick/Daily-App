@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0e0e10" />
+<title>Daily — 4 Pillars</title>
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="assets/icon.svg" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="phone">
+
+  <!-- ============ HEADER ============ -->
+  <header class="app-header">
+    <button class="icon-btn menu-btn" id="menuBtn" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="who">
+      <div class="avatar" id="avatar">K</div>
+      <div class="who-text">
+        <div class="who-name" id="userName">Kory</div>
+        <div class="who-sub" id="userSub">K</div>
+      </div>
+    </div>
+
+    <div class="badges">
+      <div class="badge badge-points" title="Total points">
+        <span class="pill-dot">P</span><span id="totalPoints">0</span>
+      </div>
+      <div class="badge badge-streak" title="Current streak">
+        <span class="flame">&#128293;</span><span id="streakCount">0</span>&nbsp;days
+      </div>
+    </div>
+  </header>
+
+  <div class="searchbar">
+    <svg viewBox="0 0 24 24" class="search-ico" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+    <input id="searchInput" type="search" placeholder="Search goals, prayers, journal" autocomplete="off" />
+  </div>
+
+  <main>
+    <!-- ============ PROGRESS ============ -->
+    <section class="card progress-card">
+      <div class="progress-top">
+        <h2>Progress</h2>
+        <div class="select-wrap">
+          <select id="rangeSelect" aria-label="Progress range">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="points-line">
+        <span class="points-num" id="rangePoints">0</span>
+        <span class="points-label">points</span>
+      </div>
+
+      <div class="chart" id="chart" role="img" aria-label="Progress chart"></div>
+    </section>
+
+    <!-- ============ DATE NAV ============ -->
+    <nav class="datenav">
+      <button class="date-arrow" id="prevDay" aria-label="Previous day">&#8249;</button>
+      <button class="date-label" id="dateLabel">Today</button>
+      <button class="date-arrow" id="nextDay" aria-label="Next day">&#8250;</button>
+    </nav>
+
+    <!-- ============ 4 PILLARS ============ -->
+    <h2 class="section-title">4 Pillars</h2>
+    <div id="pillars" class="pillars"></div>
+
+    <!-- ============ BONUS ============ -->
+    <h2 class="section-title left">Bonus Points</h2>
+    <div class="bonus-row">
+      <button class="bonus-btn" id="gratitudeBtn">
+        <span class="bonus-ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.3-9A5.2 5.2 0 0 1 12 6.6 5.2 5.2 0 0 1 21.3 12c-1.8 4.4-9.3 9-9.3 9z"/></svg>
+        </span>
+        <span class="bonus-text">Add Gratitude</span>
+        <span class="bonus-count" id="gratitudeCount"></span>
+      </button>
+      <button class="bonus-btn" id="journalBtn">
+        <span class="bonus-ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M9 3.5h6v3H9z"/><line x1="8.5" y1="11" x2="15.5" y2="11"/><line x1="8.5" y1="15" x2="13.5" y2="15"/></svg>
+        </span>
+        <span class="bonus-text">Add Journal</span>
+        <span class="bonus-count" id="journalCount"></span>
+      </button>
+    </div>
+    <ul class="entry-list" id="bonusList"></ul>
+
+    <!-- ============ GOALS ============ -->
+    <section class="block">
+      <div class="block-head">
+        <h2 class="accent">Goals</h2>
+        <span class="block-meta" id="goalMeta">0/0</span>
+      </div>
+
+      <form class="composer" id="goalForm" autocomplete="off">
+        <textarea id="goalInput" rows="2" placeholder="Type a goal&hellip; (e.g. Work out 6 days a week)"></textarea>
+        <div class="composer-row">
+          <select id="goalPillar" aria-label="Goal pillar">
+            <option value="faith">Faith</option>
+            <option value="family">Family</option>
+            <option value="fitness">Fitness</option>
+            <option value="finance">Finance</option>
+            <option value="other" selected>Other</option>
+          </select>
+          <button class="add-btn" type="submit">Add Goal</button>
+        </div>
+      </form>
+
+      <ul class="entry-list" id="goalList"></ul>
+    </section>
+
+    <!-- ============ PRAYERS ============ -->
+    <section class="block">
+      <div class="block-head">
+        <h2 class="accent">Prayers</h2>
+        <span class="block-meta" id="prayerMeta">0 answered</span>
+      </div>
+
+      <form class="composer" id="prayerForm" autocomplete="off">
+        <input id="prayerTitle" type="text" placeholder="Who / what are you praying for?" />
+        <textarea id="prayerInput" rows="3" placeholder="Type your prayer&hellip;"></textarea>
+        <div class="composer-row">
+          <label class="tiny-note">Saved privately on this device</label>
+          <button class="add-btn" type="submit">Add Prayer</button>
+        </div>
+      </form>
+
+      <ul class="entry-list" id="prayerList"></ul>
+    </section>
+
+    <footer class="foot">
+      <button class="link-btn" id="exportBtn">Export data</button>
+      <button class="link-btn" id="importBtn">Import</button>
+      <button class="link-btn danger" id="resetBtn">Reset all</button>
+      <input type="file" id="importFile" accept="application/json" hidden />
+    </footer>
+  </main>
+
+  <!-- ============ BOTTOM NAV ============ -->
+  <nav class="tabbar">
+    <button class="tab active" data-scroll="top"><span class="tab-ico">&#127968;</span>Home</button>
+    <button class="tab" data-scroll="pillars"><span class="tab-ico">&#9989;</span>Pillars</button>
+    <button class="tab" data-scroll="goalForm"><span class="tab-ico">&#127919;</span>Goals</button>
+    <button class="tab" data-scroll="prayerForm"><span class="tab-ico">&#128591;</span>Prayer</button>
+  </nav>
+</div>
+
+<!-- ============ MODAL ============ -->
+<div class="modal-backdrop" id="modal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <h3 id="modalTitle">Add</h3>
+    <textarea id="modalInput" rows="4"></textarea>
+    <div class="modal-actions">
+      <button class="ghost-btn" id="modalCancel" type="button">Cancel</button>
+      <button class="add-btn" id="modalSave" type="button">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="app.js"></script>
+</body>
+</html>
