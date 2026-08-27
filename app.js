@@ -1,5 +1,5 @@
 /* ---------------------------------------------------------------
-   Daily — 4 Pillars
+   Daily Success — the 4 Pillars daily check-in
    Everything is stored locally in the browser (localStorage).
 --------------------------------------------------------------- */
 (function () {

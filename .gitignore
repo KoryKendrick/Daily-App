@@ -7,3 +7,4 @@ node_modules/
 .zoom.mjs
 .sw*.mjs
 .bonus*.mjs
+.name.mjs

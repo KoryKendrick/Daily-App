@@ -1,6 +1,6 @@
-# Daily — 4 Pillars
+# Daily Success
 
-A daily check-in app modelled on the 4 Pillars layout: check off two habits under
+A daily check-in app built around the 4 Pillars: check off two habits under
 each pillar every day, track your progress over time, and keep your goals and
 prayers in one place.
 
@@ -79,7 +79,9 @@ node build-single-file.js
 ```
 
 Once it's open at a URL: **iPhone:** Share → *Add to Home Screen*. **Android:**
-menu → *Install app*. It then opens full-screen like a native app and works
+menu → *Install app*. It installs as **Daily Success**. Renaming the app later
+does not rename a copy already on a home screen — remove that icon and add it
+again to pick up the new name. It then opens full-screen like a native app and works
 offline — a service worker (`sw.js`) caches the files, and the web app manifest
 supplies the icon and theme.
 
