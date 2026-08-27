@@ -13,3 +13,4 @@ node_modules/
 .logshot.mjs
 .rename.mjs
 .blank.mjs
+.clear.mjs

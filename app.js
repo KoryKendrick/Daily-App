@@ -690,11 +690,13 @@
     list3.appendChild(menuItem('&#128100;', 'Your name', state.profile.name || 'Not set', function () {
       openModal('Your name', state.profile.name, function (val) {
         var name = val.replace(/\s+/g, ' ').trim();   // a name is one line
-        if (!name) { toast('Enter a name'); return false; }
-        state.profile.name = name;
-        state.profile.sub = name.charAt(0).toUpperCase();
+        state.profile.name = name;                     // empty clears it again
+        state.profile.sub = name ? name.charAt(0).toUpperCase() : '';
         save(); renderHeader(); refreshSheet();
-        toast('Name updated');
+        toast(name ? 'Name updated' : 'Name cleared');
+      }, {
+        allowEmpty: true,
+        placeholder: 'Leave empty to show no name'
       });
     }));
     body.appendChild(list3);
