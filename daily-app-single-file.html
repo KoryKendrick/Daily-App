@@ -8,7 +8,7 @@
 <style>
 /* ---------------------------------------------------------------
    Daily — 4 Pillars
-   Dark + gold theme modelled on the reference screenshot.
+   Dark + lime theme modelled on the reference screenshot.
 --------------------------------------------------------------- */
 :root {
   --bg:            #0e0e10;
@@ -17,11 +17,11 @@
   --card-2:        #212226;
   --line:          #2c2d32;
 
-  --gold-1:        #f5e08a;
-  --gold-2:        #e8c85f;
-  --gold-3:        #c9a63c;
-  --gold-dim-1:    #7a6a30;
-  --gold-dim-2:    #6a5c2a;
+  --lime-1:        #ddf87f;
+  --lime-2:        #b9ee45;
+  --lime-3:        #8fc41f;
+  --lime-dim-1:    #5a7a26;
+  --lime-dim-2:    #4c691f;
 
   --teal:          #4fd1a5;
   --text:          #f3f4f6;
@@ -75,7 +75,7 @@ button { cursor: pointer; }
 }
 .menu-btn span {
   display: block; height: 2.5px; border-radius: 2px;
-  background: var(--gold-2);
+  background: var(--lime-2);
 }
 .menu-btn span:nth-child(2) { width: 80%; }
 
@@ -84,11 +84,11 @@ button { cursor: pointer; }
 .avatar {
   width: 42px; height: 42px; flex: 0 0 42px;
   border-radius: 50%;
-  background: linear-gradient(145deg, var(--gold-1), var(--gold-3));
-  color: #22200f;
+  background: linear-gradient(145deg, var(--lime-1), var(--lime-3));
+  color: #16210a;
   font-weight: 800; font-size: 18px;
   display: grid; place-items: center;
-  border: 2px solid #3a3413;
+  border: 2px solid #2f4113;
 }
 
 .who-name { font-size: 21px; font-weight: 800; letter-spacing: .2px; line-height: 1.1; }
@@ -102,14 +102,14 @@ button { cursor: pointer; }
   padding: 6px 11px;
   font-size: 13px; font-weight: 700;
   white-space: nowrap;
-  background: #241f10;
-  border: 1px solid var(--gold-dim-1);
-  color: var(--gold-1);
+  background: #1a2410;
+  border: 1px solid var(--lime-dim-1);
+  color: var(--lime-1);
 }
 .pill-dot {
   width: 17px; height: 17px; border-radius: 50%;
-  background: linear-gradient(145deg, var(--gold-1), var(--gold-3));
-  color: #241f10; font-size: 11px; font-weight: 900;
+  background: linear-gradient(145deg, var(--lime-1), var(--lime-3));
+  color: #1a2410; font-size: 11px; font-weight: 900;
   display: grid; place-items: center;
 }
 .badge-streak .flame { font-size: 13px; }
@@ -206,17 +206,17 @@ button { cursor: pointer; }
 }
 .chart .bar {
   border-radius: 4px 4px 2px 2px;
-  background: linear-gradient(180deg, var(--gold-dim-1), #4b421d);
-  border: 1px solid var(--gold-dim-2);
+  background: linear-gradient(180deg, var(--lime-dim-1), #3d5219);
+  border: 1px solid var(--lime-dim-2);
   border-bottom: 0;
   min-height: 2px;
   transition: height .35s ease;
 }
 .chart .bar.full {
-  background: linear-gradient(180deg, var(--gold-2), var(--gold-3));
-  border-color: var(--gold-1);
+  background: linear-gradient(180deg, var(--lime-2), var(--lime-3));
+  border-color: var(--lime-1);
 }
-.chart .bar.today { box-shadow: 0 0 0 1px var(--gold-1) inset; }
+.chart .bar.today { box-shadow: 0 0 0 1px var(--lime-1) inset; }
 .chart .bar-label {
   position: absolute; bottom: -21px; left: 0; right: 0;
   text-align: center; font-size: 11px; color: var(--text-faint);
@@ -230,7 +230,7 @@ button { cursor: pointer; }
 .date-arrow {
   width: 34px; height: 34px; border-radius: 50%;
   background: var(--card); border: 1px solid var(--line);
-  color: var(--gold-2); font-size: 20px; line-height: 1;
+  color: var(--lime-2); font-size: 20px; line-height: 1;
 }
 .date-arrow:disabled { opacity: .3; cursor: not-allowed; }
 .date-label {
@@ -239,7 +239,7 @@ button { cursor: pointer; }
   font-size: 14px; font-weight: 700; color: var(--text-dim);
   min-width: 170px;
 }
-.date-label.past { color: var(--gold-2); border-color: var(--gold-dim-1); }
+.date-label.past { color: var(--lime-2); border-color: var(--lime-dim-1); }
 
 /* ------------------------- section titles ------------------------- */
 .section-title {
@@ -260,9 +260,9 @@ button { cursor: pointer; }
   transition: background .3s ease, border-color .3s ease;
 }
 .pillar.complete {
-  background: linear-gradient(150deg, #6f6128, #4a4019 62%, #3c3415);
-  border-color: var(--gold-2);
-  box-shadow: 0 0 0 1px rgba(232,200,95,.25), 0 8px 22px -14px rgba(232,200,95,.6);
+  background: linear-gradient(150deg, #5c7a24, #3f5219 62%, #334215);
+  border-color: var(--lime-2);
+  box-shadow: 0 0 0 1px rgba(185,238,69,.25), 0 8px 22px -14px rgba(185,238,69,.6);
 }
 
 .pillar-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 11px; }
@@ -276,8 +276,9 @@ button { cursor: pointer; }
 }
 .pillar.complete .count {
   color: var(--teal);
-  background: rgba(0,0,0,.28);
-  border-color: rgba(79,209,165,.55);
+  /* deep backing keeps the teal counter legible on the lime card */
+  background: rgba(0,0,0,.45);
+  border-color: rgba(79,209,165,.7);
 }
 .count .ticks { display: none; color: var(--teal); font-weight: 900; letter-spacing: -2px; }
 .pillar.complete .count .ticks { display: inline; }
@@ -292,7 +293,7 @@ button { cursor: pointer; }
   display: grid; place-items: center;
 }
 .pillar-icon svg { width: 26px; height: 26px; }
-.pillar.complete .pillar-icon { background: #14150f; border-color: #3f3a1c; }
+.pillar.complete .pillar-icon { background: #101508; border-color: #3a4a1c; }
 
 /* checkbox tasks — the core of the screen */
 .task {
@@ -317,15 +318,15 @@ button { cursor: pointer; }
   display: grid; place-items: center;
   transition: background .2s ease, border-color .2s ease;
 }
-.task .box svg { width: 12px; height: 12px; opacity: 0; stroke: #1b1a10; stroke-width: 3.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.task .box svg { width: 12px; height: 12px; opacity: 0; stroke: #131a09; stroke-width: 3.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
 .task.done {
-  background: linear-gradient(140deg, var(--gold-1), var(--gold-2) 55%, var(--gold-3));
-  border-color: var(--gold-1);
-  color: #201d0d;
+  background: linear-gradient(140deg, var(--lime-1), var(--lime-2) 55%, var(--lime-3));
+  border-color: var(--lime-1);
+  color: #16210a;
 }
-.task.done .box { background: #1e1c0e; border-color: #1e1c0e; }
-.task.done .box svg { opacity: 1; stroke: var(--gold-1); }
+.task.done .box { background: #131a09; border-color: #131a09; }
+.task.done .box svg { opacity: 1; stroke: var(--lime-1); }
 .task .label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* ------------------------- bonus ------------------------- */
@@ -335,20 +336,20 @@ button { cursor: pointer; }
   display: flex; align-items: center; gap: 9px;
   padding: 13px 12px;
   border-radius: var(--radius);
-  border: 1px solid var(--gold-dim-1);
-  background: linear-gradient(140deg, #b8a04a, #d9bf5d);
-  color: #241f0c;
+  border: 1px solid var(--lime-dim-1);
+  background: linear-gradient(140deg, #93c62f, #b7e84e);
+  color: #16210a;
   font-weight: 700; font-size: 15px;
   position: relative;
 }
-.bonus-btn:nth-child(2) { background: linear-gradient(140deg, var(--gold-1), var(--gold-2)); }
+.bonus-btn:nth-child(2) { background: linear-gradient(140deg, var(--lime-1), var(--lime-2)); }
 .bonus-btn:active { transform: scale(.98); }
 .bonus-ico {
   width: 30px; height: 30px; flex: 0 0 30px; border-radius: 50%;
   background: rgba(255,255,255,.42);
   display: grid; place-items: center;
 }
-.bonus-ico svg { width: 17px; height: 17px; fill: none; stroke: #241f0c; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.bonus-ico svg { width: 17px; height: 17px; fill: none; stroke: #16210a; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
 .bonus-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bonus-count {
   position: absolute; top: -6px; right: -4px;
@@ -385,7 +386,7 @@ button { cursor: pointer; }
   font-size: 15px;
 }
 .composer textarea::placeholder, .composer input::placeholder { color: var(--text-faint); }
-.composer textarea:focus, .composer input:focus { border-color: var(--gold-dim-1); }
+.composer textarea:focus, .composer input:focus { border-color: var(--lime-dim-1); }
 
 .composer-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .composer-row select {
@@ -396,8 +397,8 @@ button { cursor: pointer; }
 .tiny-note { font-size: 12px; color: var(--text-faint); }
 
 .add-btn {
-  background: linear-gradient(140deg, var(--gold-1), var(--gold-3));
-  color: #221e0c;
+  background: linear-gradient(140deg, var(--lime-1), var(--lime-3));
+  color: #16210a;
   border: 0; border-radius: 11px;
   padding: 10px 18px;
   font-weight: 800; font-size: 14px;
@@ -419,7 +420,7 @@ button { cursor: pointer; }
   padding: 12px 12px 12px 12px;
   display: flex; gap: 10px; align-items: flex-start;
 }
-.entry.done { background: linear-gradient(140deg, #4a4019, #3a3214); border-color: var(--gold-dim-1); }
+.entry.done { background: linear-gradient(140deg, #3f5219, #334414); border-color: var(--lime-dim-1); }
 
 .entry-check {
   width: 22px; height: 22px; flex: 0 0 22px; margin-top: 1px;
@@ -429,8 +430,8 @@ button { cursor: pointer; }
   display: grid; place-items: center;
   padding: 0;
 }
-.entry.done .entry-check { background: var(--gold-2); border-color: var(--gold-1); }
-.entry-check svg { width: 12px; height: 12px; opacity: 0; fill: none; stroke: #241f0c; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+.entry.done .entry-check { background: var(--lime-2); border-color: var(--lime-1); }
+.entry-check svg { width: 12px; height: 12px; opacity: 0; fill: none; stroke: #16210a; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
 .entry.done .entry-check svg { opacity: 1; }
 
 .entry-main { flex: 1 1 auto; min-width: 0; }
@@ -446,7 +447,7 @@ button { cursor: pointer; }
 .tag.faith   { color: #9fd3ff; border-color: #2c4257; }
 .tag.family  { color: #ff9d9d; border-color: #5a3030; }
 .tag.fitness { color: #7fe3c4; border-color: #24544a; }
-.tag.finance { color: var(--gold-1); border-color: var(--gold-dim-1); }
+.tag.finance { color: var(--lime-1); border-color: var(--lime-dim-1); }
 .tag.answered { color: var(--teal); border-color: rgba(79,209,165,.5); }
 
 .entry-actions { display: flex; gap: 4px; flex: 0 0 auto; }
@@ -482,7 +483,7 @@ button { cursor: pointer; }
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
   font-size: 11px; font-weight: 700; color: var(--text-faint);
 }
-.tab.active { color: var(--gold-2); }
+.tab.active { color: var(--lime-2); }
 .tab-ico { font-size: 19px; line-height: 1; }
 
 /* ------------------------- modal / toast ------------------------- */
@@ -504,14 +505,14 @@ button { cursor: pointer; }
   width: 100%; background: var(--bg-soft); border: 1px solid var(--line);
   border-radius: var(--radius-sm); padding: 11px 12px; outline: none; resize: vertical; font-size: 15px;
 }
-.modal textarea:focus { border-color: var(--gold-dim-1); }
+.modal textarea:focus { border-color: var(--lime-dim-1); }
 .modal-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 12px; flex-wrap: wrap; }
 .modal-actions [hidden] { display: none !important; }
 
 .toast {
   position: fixed; left: 50%; bottom: calc(var(--tab-h) + 16px);
   transform: translateX(-50%);
-  background: #26241a; border: 1px solid var(--gold-dim-1); color: var(--gold-1);
+  background: #1e2a12; border: 1px solid var(--lime-dim-1); color: var(--lime-1);
   padding: 10px 16px; border-radius: 999px;
   font-size: 14px; font-weight: 700; z-index: 60;
   animation: pop .2s ease;
@@ -731,7 +732,7 @@ button { cursor: pointer; }
     cross: '<svg viewBox="0 0 24 24" fill="none" stroke="#4fd1a5" stroke-width="2.2" stroke-linecap="round"><path d="M12 3v18M6.5 8.5h11"/></svg>',
     family: '<svg viewBox="0 0 24 24" fill="#f47272"><circle cx="8" cy="8.5" r="3"/><circle cx="16" cy="8.5" r="3"/><path d="M2.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5z"/><path d="M10.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5z"/></svg>',
     dumbbell: '<svg viewBox="0 0 24 24" fill="none" stroke="#4fd1a5" stroke-width="2.2" stroke-linecap="round"><path d="M3 9v6M6 7v10M18 7v10M21 9v6M6 12h12"/></svg>',
-    chart: '<svg viewBox="0 0 24 24" fill="none" stroke="#e8c85f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5.5-5.5 3.5 3.5L21 6"/><path d="M15 6h6v6"/></svg>'
+    chart: '<svg viewBox="0 0 24 24" fill="none" stroke="#b9ee45" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5.5-5.5 3.5 3.5L21 6"/><path d="M15 6h6v6"/></svg>'
   };
 
   var CHECK_SVG = '<svg viewBox="0 0 24 24"><polyline points="5 12.5 10 17.5 19 7"/></svg>';

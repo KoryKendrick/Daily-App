@@ -36,7 +36,7 @@
     cross: '<svg viewBox="0 0 24 24" fill="none" stroke="#4fd1a5" stroke-width="2.2" stroke-linecap="round"><path d="M12 3v18M6.5 8.5h11"/></svg>',
     family: '<svg viewBox="0 0 24 24" fill="#f47272"><circle cx="8" cy="8.5" r="3"/><circle cx="16" cy="8.5" r="3"/><path d="M2.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5z"/><path d="M10.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5z"/></svg>',
     dumbbell: '<svg viewBox="0 0 24 24" fill="none" stroke="#4fd1a5" stroke-width="2.2" stroke-linecap="round"><path d="M3 9v6M6 7v10M18 7v10M21 9v6M6 12h12"/></svg>',
-    chart: '<svg viewBox="0 0 24 24" fill="none" stroke="#e8c85f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5.5-5.5 3.5 3.5L21 6"/><path d="M15 6h6v6"/></svg>'
+    chart: '<svg viewBox="0 0 24 24" fill="none" stroke="#b9ee45" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5.5-5.5 3.5 3.5L21 6"/><path d="M15 6h6v6"/></svg>'
   };
 
   var CHECK_SVG = '<svg viewBox="0 0 24 24"><polyline points="5 12.5 10 17.5 19 7"/></svg>';

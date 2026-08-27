@@ -18,7 +18,7 @@ your data stays in your own browser (`localStorage`).
 | Fitness | Exercise, Nutrition       |
 | Finance | Learn, Plan               |
 
-A pillar turns gold when both of its boxes are checked, and its counter flips to
+A pillar turns lime when both of its boxes are checked, and its counter flips to
 `✓✓ 2/2`.
 
 **Bonus points** — *Add Gratitude* and *Add Journal*, one bonus point each per day.
@@ -85,7 +85,7 @@ supplies the icon and theme.
 
 ```
 index.html                   markup for the whole screen
-styles.css                   dark + gold theme
+styles.css                   dark + lime theme
 app.js                       state, scoring, streak, chart, goals, prayers
 manifest.webmanifest         PWA metadata (installable, standalone)
 sw.js                        offline cache

@@ -3,3 +3,5 @@ node_modules/
 *.log
 .shot*.mjs
 .verify*.mjs
+.shot*.mjs
+.zoom.mjs
