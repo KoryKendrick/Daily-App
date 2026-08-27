@@ -17,3 +17,4 @@ node_modules/
 .nm.mjs
 .nmshot.mjs
 .hdr.mjs
+.learn*.mjs

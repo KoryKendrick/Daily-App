@@ -21,6 +21,11 @@ your data stays in your own browser (`localStorage`).
 A pillar turns lime when both of its boxes are checked, and its counter flips to
 `✓✓ 2/2`.
 
+**Learn** is the one box that asks for something: tapping it opens "What did you
+learn today?" and it only ticks once you have written an answer. Tapping it again
+shows what you wrote, to edit or remove. Each day stands on its own, and every
+note is kept in the **Learn Log** in the menu, newest day first.
+
 **Bonus points** — *Add Gratitude* and *Add Journal*, one bonus point each per
 day. Both stay unlit until that day has an entry, then fill in like a checked
 pillar box and show how many entries you wrote. The home screen shows the day
@@ -44,8 +49,8 @@ it is, and keep the whole list as a record. Like goals, the home screen shows
 this week and everything older lives in the **Prayer Log** in the menu. Archived
 prayers stay editable, so one answered months later can still be marked.
 
-**Menu** (the ☰ button) holds the Prayer Log, Goals Log, Gratitude Archive and
-Journal Archive, plus your name — blank on a new install until you set it there,
+**Menu** (the ☰ button) holds the Prayer Log, Goals Log, Gratitude Archive,
+Journal Archive and Learn Log, plus your name — blank on a new install until you set it there,
 and blank again if you clear the field.
 
 Until a name is set the header reads a muted **Name**. Tap it (or the menu row)

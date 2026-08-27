@@ -831,7 +831,7 @@ button { cursor: pointer; }
   'use strict';
 
   var STORE_KEY = 'dailyApp.v1';
-  var APP_VERSION = '2026.08.27.8';
+  var APP_VERSION = '2026.08.27.9';
 
   /* ---------------- pillar / task definitions ---------------- */
   var PILLARS = [
@@ -849,7 +849,7 @@ button { cursor: pointer; }
     },
     {
       id: 'finance', name: 'Finance', icon: 'chart',
-      tasks: [{ id: 'learn', label: 'Learn' }, { id: 'plan', label: 'Plan' }]
+      tasks: [{ id: 'learn', label: 'Learn', note: 'learn' }, { id: 'plan', label: 'Plan' }]
     }
   ];
 
@@ -934,11 +934,12 @@ button { cursor: pointer; }
   }
 
   function day(key) {
-    if (!state.days[key]) state.days[key] = { tasks: {}, gratitude: [], journal: [] };
+    if (!state.days[key]) state.days[key] = { tasks: {}, gratitude: [], journal: [], learn: [] };
     var d = state.days[key];
     if (!d.tasks) d.tasks = {};
     if (!Array.isArray(d.gratitude)) d.gratitude = [];
     if (!Array.isArray(d.journal)) d.journal = [];
+    if (!Array.isArray(d.learn)) d.learn = [];
     return d;
   }
 
@@ -1120,13 +1121,46 @@ button { cursor: pointer; }
         btn.type = 'button';
         btn.setAttribute('aria-pressed', done ? 'true' : 'false');
         btn.innerHTML = '<span class="box">' + CHECK_SVG + '</span><span class="label">' + escapeHtml(t.label) + '</span>';
-        btn.addEventListener('click', function () { toggleTask(id); });
+        btn.addEventListener('click', function () {
+          if (t.note) openNoteTask(p.id, t);
+          else toggleTask(id);
+        });
         body.appendChild(btn);
       });
 
       card.appendChild(head);
       card.appendChild(body);
       wrap.appendChild(card);
+    });
+  }
+
+  /* A task with `note` is only done once something is written for that day.
+     Re-opening it shows what was written, so it can be edited or removed. */
+  function openNoteTask(pillarId, task) {
+    var key = keyOf(viewDate);
+    var d = day(key);
+    var id = pillarId + '.' + task.id;
+    var existing = d[task.note][0];
+
+    openModal('What did you learn today?', existing ? existing.text : '', function (val) {
+      if (existing) {
+        existing.text = val;
+      } else {
+        d[task.note].push({ id: uid(), text: val, ts: Date.now() });
+      }
+      d.tasks[id] = true;
+      save(); renderPillars(); renderChart(); renderHeader(); refreshSheet();
+      toast(existing ? 'Learning updated' : 'Learning saved');
+    }, {
+      placeholder: 'What did you learn today?',
+      saveLabel: existing ? 'Update' : 'Save',
+      extraLabel: existing ? 'Remove' : '',
+      onExtra: function () {
+        d[task.note] = [];
+        delete d.tasks[id];
+        save(); closeModal(); renderPillars(); renderChart(); renderHeader(); refreshSheet();
+        toast('Learning removed');
+      }
     });
   }
 
@@ -1174,16 +1208,19 @@ button { cursor: pointer; }
 
   /* ---------------- shared entry rows ---------------- */
 
+  var ENTRY_LABEL = { gratitude: 'Gratitude', journal: 'Journal', learn: 'Learn' };
+  var ENTRY_TAG = { gratitude: 'family', journal: 'finance', learn: 'finance' };
+
   function bonusEntryNode(kind, entry, dayKey, onChange) {
     var li = el('li', 'entry');
     var main = el('div', 'entry-main');
 
     var title = el('div', 'entry-title');
-    title.textContent = kind === 'gratitude' ? 'Gratitude' : 'Journal';
+    title.textContent = ENTRY_LABEL[kind];
     var body = el('div', 'entry-body');
     body.textContent = entry.text;
     var meta = el('div', 'entry-meta');
-    meta.innerHTML = '<span class="tag ' + (kind === 'gratitude' ? 'family' : 'finance') + '">' +
+    meta.innerHTML = '<span class="tag ' + ENTRY_TAG[kind] + '">' +
       kind + '</span><span>' + fmtShort(entry.ts) + '</span>';
     main.appendChild(title); main.appendChild(body); main.appendChild(meta);
 
@@ -1191,16 +1228,18 @@ button { cursor: pointer; }
     var edit = el('button', 'mini-btn');
     edit.type = 'button'; edit.textContent = 'Edit';
     edit.addEventListener('click', function () {
-      openModal(kind === 'gratitude' ? 'Edit gratitude' : 'Edit journal', entry.text, function (val) {
+      openModal('Edit ' + ENTRY_LABEL[kind].toLowerCase(), entry.text, function (val) {
         entry.text = val; save(); onChange();
       });
     });
     var del = el('button', 'mini-btn danger');
     del.type = 'button'; del.textContent = 'Delete';
     del.addEventListener('click', function () {
-      var arr = day(dayKey)[kind];
-      var i = arr.findIndex(function (x) { return x.id === entry.id; });
-      if (i > -1) arr.splice(i, 1);
+      var d = day(dayKey);
+      var i = d[kind].findIndex(function (x) { return x.id === entry.id; });
+      if (i > -1) d[kind].splice(i, 1);
+      // the Learn box is only ticked while that day has a note
+      if (kind === 'learn' && !d.learn.length) delete d.tasks['finance.learn'];
       save(); onChange();
     });
     actions.appendChild(edit); actions.appendChild(del);
@@ -1402,6 +1441,7 @@ button { cursor: pointer; }
     prayers:   { title: 'Prayer Log',        period: 'week' },
     gratitude: { title: 'Gratitude Archive', period: 'day', kinds: ['gratitude'] },
     journal:   { title: 'Journal Archive',   period: 'day', kinds: ['journal'] },
+    learn:     { title: 'Learn Log',         period: 'day', kinds: ['learn'] },
     bonus:     { title: 'Bonus Archive',     period: 'day', kinds: ['gratitude', 'journal'] }
   };
 
@@ -1505,6 +1545,11 @@ button { cursor: pointer; }
     list2.appendChild(menuItem('&#128221;', 'Journal Archive',
       plural(jr.entries, 'entry', 'entries') + ' · ' + plural(jr.days, 'day', 'days'),
       function () { openSheet({ type: 'log', log: 'journal' }); }));
+
+    var lr = bonusTotals('learn');
+    list2.appendChild(menuItem('&#128218;', 'Learn Log',
+      plural(lr.entries, 'entry', 'entries') + ' · ' + plural(lr.days, 'day', 'days'),
+      function () { openSheet({ type: 'log', log: 'learn' }); }));
 
     body.appendChild(list2);
 
