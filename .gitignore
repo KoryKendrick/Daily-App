@@ -12,3 +12,4 @@ node_modules/
 .rollover.mjs
 .logshot.mjs
 .rename.mjs
+.blank.mjs

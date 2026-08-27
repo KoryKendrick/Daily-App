@@ -45,7 +45,7 @@ this week and everything older lives in the **Prayer Log** in the menu. Archived
 prayers stay editable, so one answered months later can still be marked.
 
 **Menu** (the ☰ button) holds the Prayer Log, Goals Log, Gratitude Archive and
-Journal Archive, plus your name. Nothing is ever deleted by archiving — what
+Journal Archive, plus your name — blank on a new install until you set it there. Nothing is ever deleted by archiving — what
 leaves the home screen is always in a log.
 
 **Search** filters goals, prayers, and today's gratitude/journal entries, and

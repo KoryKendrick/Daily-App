@@ -78,7 +78,7 @@
 
   function blankState() {
     return {
-      profile: { name: 'Kory', sub: 'K' },
+      profile: { name: '', sub: '' },
       days: {},      // key -> { tasks: {}, gratitude: [], journal: [] }
       goals: [],
       prayers: []
@@ -205,9 +205,11 @@
 
   /* ---------------- rendering ---------------- */
   function renderHeader() {
-    $('userName').textContent = state.profile.name;
-    $('userSub').textContent = state.profile.sub;
-    $('avatar').textContent = (state.profile.name || '?').trim().charAt(0).toUpperCase();
+    // blank until a name is set from the menu
+    var name = (state.profile.name || '').trim();
+    $('userName').textContent = name;
+    $('userSub').textContent = name ? state.profile.sub : '';
+    $('avatar').textContent = name ? name.charAt(0).toUpperCase() : '';
     $('totalPoints').textContent = totalPoints();
     $('streakCount').textContent = streak();
   }
@@ -685,7 +687,7 @@
     body.appendChild(t3);
 
     var list3 = el('div', 'menu-list');
-    list3.appendChild(menuItem('&#128100;', 'Your name', state.profile.name, function () {
+    list3.appendChild(menuItem('&#128100;', 'Your name', state.profile.name || 'Not set', function () {
       openModal('Your name', state.profile.name, function (val) {
         var name = val.replace(/\s+/g, ' ').trim();   // a name is one line
         if (!name) { toast('Enter a name'); return false; }

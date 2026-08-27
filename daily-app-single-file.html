@@ -94,8 +94,8 @@ button { cursor: pointer; }
   border: 2px solid #2f4113;
 }
 
-.who-name { font-size: 21px; font-weight: 800; letter-spacing: .2px; line-height: 1.1; }
-.who-sub  { font-size: 13px; color: var(--text-faint); }
+.who-name { font-size: 21px; font-weight: 800; letter-spacing: .2px; line-height: 1.1; min-height: 23px; }
+.who-sub  { font-size: 13px; color: var(--text-faint); min-height: 17px; }
 
 .badges { display: flex; gap: 7px; align-items: center; }
 
@@ -898,7 +898,7 @@ button { cursor: pointer; }
 
   function blankState() {
     return {
-      profile: { name: 'Kory', sub: 'K' },
+      profile: { name: '', sub: '' },
       days: {},      // key -> { tasks: {}, gratitude: [], journal: [] }
       goals: [],
       prayers: []
@@ -1025,9 +1025,11 @@ button { cursor: pointer; }
 
   /* ---------------- rendering ---------------- */
   function renderHeader() {
-    $('userName').textContent = state.profile.name;
-    $('userSub').textContent = state.profile.sub;
-    $('avatar').textContent = (state.profile.name || '?').trim().charAt(0).toUpperCase();
+    // blank until a name is set from the menu
+    var name = (state.profile.name || '').trim();
+    $('userName').textContent = name;
+    $('userSub').textContent = name ? state.profile.sub : '';
+    $('avatar').textContent = name ? name.charAt(0).toUpperCase() : '';
     $('totalPoints').textContent = totalPoints();
     $('streakCount').textContent = streak();
   }
@@ -1505,7 +1507,7 @@ button { cursor: pointer; }
     body.appendChild(t3);
 
     var list3 = el('div', 'menu-list');
-    list3.appendChild(menuItem('&#128100;', 'Your name', state.profile.name, function () {
+    list3.appendChild(menuItem('&#128100;', 'Your name', state.profile.name || 'Not set', function () {
       openModal('Your name', state.profile.name, function (val) {
         var name = val.replace(/\s+/g, ' ').trim();   // a name is one line
         if (!name) { toast('Enter a name'); return false; }
