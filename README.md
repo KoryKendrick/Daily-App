@@ -36,7 +36,7 @@ morning. Journal takes as many entries as you want to write.
 
 Neither is listed on the home screen: both are filed straight into their
 archives, and the lit button is what shows the day's state. Every past day is
-under the menu — **Daily Affirmations** and **Journal Archive** — newest first.
+under the menu — **Affirmations** and **Journal Archive** — newest first.
 
 **Tracked progress**
 - 1 point per checkbox + 1 per bonus type = **10 points max per day**.

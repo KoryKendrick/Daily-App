@@ -6,7 +6,7 @@
   'use strict';
 
   var STORE_KEY = 'dailyApp.v1';
-  var APP_VERSION = '2026.08.28.3';
+  var APP_VERSION = '2026.08.28.4';
 
   /* ---------------- pillar / task definitions ---------------- */
   var PILLARS = [
@@ -649,7 +649,7 @@
   var LOGS = {
     goals:     { title: 'Goals Log',         period: 'week' },
     prayers:   { title: 'Prayer Log',        period: 'week' },
-    gratitude: { title: 'Daily Affirmations', period: 'day', kinds: ['gratitude'] },
+    gratitude: { title: 'Affirmations',       period: 'day', kinds: ['gratitude'] },
     journal:   { title: 'Journal Archive',   period: 'day', kinds: ['journal'] },
     learn:     { title: 'Learn Log',         period: 'day', kinds: ['learn'] },
     bonus:     { title: 'Bonus Archive',     period: 'day', kinds: ['gratitude', 'journal'] }
@@ -748,7 +748,7 @@
     var list2 = el('div', 'menu-list');
     var g = bonusTotals('gratitude'), jr = bonusTotals('journal');
 
-    list2.appendChild(menuItem('&#10084;&#65039;', 'Daily Affirmations',
+    list2.appendChild(menuItem('&#10084;&#65039;', 'Affirmations',
       plural(g.entries, 'entry', 'entries') + ' · ' + plural(g.days, 'day', 'days'),
       function () { openSheet({ type: 'log', log: 'gratitude' }); }));
 

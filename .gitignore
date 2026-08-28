@@ -23,3 +23,4 @@ node_modules/
 .aff*.mjs
 .jr.mjs
 .aff2*.mjs
+.tab.mjs
