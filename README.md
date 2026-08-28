@@ -26,17 +26,17 @@ learn today?" and it only ticks once you have written an answer. Tapping it agai
 shows what you wrote, to edit or remove. Each day stands on its own, and every
 note is kept in the **Learn Log** in the menu, newest day first.
 
-**Bonus points** — *Affirmations* and *Add Journal*, one bonus point each per
+**Bonus points** — *Gratitude* and *Add Journal*, one bonus point each per
 day. Both stay unlit until that day has an entry, then fill in like a checked
 pillar box.
 
-*Affirmations* asks for **3 daily affirmations**. Tapping it again shows what you
+*Gratitude* asks for **3 daily affirmations**. Tapping it again shows what you
 wrote that day, to update or remove — one entry per day, so it starts fresh each
 morning. Journal takes as many entries as you want to write.
 
 Neither is listed on the home screen: both are filed straight into their
 archives, and the lit button is what shows the day's state. Every past day is
-under the menu — **Affirmations** and **Journal Archive** — newest first.
+under the menu — **Gratitude** and **Journal Archive** — newest first.
 
 **Tracked progress**
 - 1 point per checkbox + 1 per bonus type = **10 points max per day**.

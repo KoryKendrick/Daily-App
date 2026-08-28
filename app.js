@@ -6,7 +6,7 @@
   'use strict';
 
   var STORE_KEY = 'dailyApp.v1';
-  var APP_VERSION = '2026.08.28.4';
+  var APP_VERSION = '2026.08.28.5';
 
   /* ---------------- pillar / task definitions ---------------- */
   var PILLARS = [
@@ -397,7 +397,7 @@
 
   /* ---------------- shared entry rows ---------------- */
 
-  var ENTRY_LABEL = { gratitude: 'Affirmations', journal: 'Journal', learn: 'Learn' };
+  var ENTRY_LABEL = { gratitude: 'Gratitude', journal: 'Journal', learn: 'Learn' };
   var ENTRY_TAG = { gratitude: 'family', journal: 'finance', learn: 'finance' };
 
   function bonusEntryNode(kind, entry, dayKey, onChange) {
@@ -649,7 +649,7 @@
   var LOGS = {
     goals:     { title: 'Goals Log',         period: 'week' },
     prayers:   { title: 'Prayer Log',        period: 'week' },
-    gratitude: { title: 'Affirmations',       period: 'day', kinds: ['gratitude'] },
+    gratitude: { title: 'Gratitude',         period: 'day', kinds: ['gratitude'] },
     journal:   { title: 'Journal Archive',   period: 'day', kinds: ['journal'] },
     learn:     { title: 'Learn Log',         period: 'day', kinds: ['learn'] },
     bonus:     { title: 'Bonus Archive',     period: 'day', kinds: ['gratitude', 'journal'] }
@@ -748,7 +748,7 @@
     var list2 = el('div', 'menu-list');
     var g = bonusTotals('gratitude'), jr = bonusTotals('journal');
 
-    list2.appendChild(menuItem('&#10084;&#65039;', 'Affirmations',
+    list2.appendChild(menuItem('&#10084;&#65039;', 'Gratitude',
       plural(g.entries, 'entry', 'entries') + ' · ' + plural(g.days, 'day', 'days'),
       function () { openSheet({ type: 'log', log: 'gratitude' }); }));
 
@@ -1005,9 +1005,9 @@
       openDailyEntry('gratitude', {
         title: '3 daily affirmations',
         placeholder: '1.\n2.\n3.',
-        saved: 'Affirmations saved',
-        updated: 'Affirmations updated',
-        removed: 'Affirmations removed'
+        saved: 'Gratitude saved',
+        updated: 'Gratitude updated',
+        removed: 'Gratitude removed'
       });
     });
 
