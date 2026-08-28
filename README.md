@@ -30,7 +30,7 @@ note is kept in the **Learn Log** in the menu, newest day first.
 day. Both stay unlit until that day has an entry, then fill in like a checked
 pillar box.
 
-*Gratitude* asks for **3 daily affirmations**. Tapping it again shows what you
+*Gratitude* asks for **3 things I'm grateful for**. Tapping it again shows what you
 wrote that day, to update or remove — one entry per day, so it starts fresh each
 morning. Journal takes as many entries as you want to write.
 

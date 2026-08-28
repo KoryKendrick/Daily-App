@@ -25,3 +25,4 @@ node_modules/
 .aff2*.mjs
 .tab.mjs
 .g.mjs
+.gr.mjs

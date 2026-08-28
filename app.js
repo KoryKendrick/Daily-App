@@ -6,7 +6,7 @@
   'use strict';
 
   var STORE_KEY = 'dailyApp.v1';
-  var APP_VERSION = '2026.08.28.5';
+  var APP_VERSION = '2026.08.28.6';
 
   /* ---------------- pillar / task definitions ---------------- */
   var PILLARS = [
@@ -1003,7 +1003,7 @@
 
     $('gratitudeBtn').addEventListener('click', function () {
       openDailyEntry('gratitude', {
-        title: '3 daily affirmations',
+        title: "3 things I'm grateful for",
         placeholder: '1.\n2.\n3.',
         saved: 'Gratitude saved',
         updated: 'Gratitude updated',
