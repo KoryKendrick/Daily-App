@@ -28,8 +28,12 @@ note is kept in the **Learn Log** in the menu, newest day first.
 
 **Bonus points** — *Add Gratitude* and *Add Journal*, one bonus point each per
 day. Both stay unlit until that day has an entry, then fill in like a checked
-pillar box and show how many entries you wrote. The home screen shows the day
-you're viewing; every past day is in the archives under the menu, newest first.
+pillar box and show how many entries you wrote.
+
+A journal entry is filed straight into the **Journal Archive** and is not listed
+on the home screen — the lit button and its count are all that show there.
+Gratitude entries stay listed for the day you are viewing. Every past day of
+both is in the archives under the menu, newest first.
 
 **Tracked progress**
 - 1 point per checkbox + 1 per bonus type = **10 points max per day**.

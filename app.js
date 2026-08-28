@@ -6,7 +6,7 @@
   'use strict';
 
   var STORE_KEY = 'dailyApp.v1';
-  var APP_VERSION = '2026.08.28.1';
+  var APP_VERSION = '2026.08.28.2';
 
   /* ---------------- pillar / task definitions ---------------- */
   var PILLARS = [
@@ -538,9 +538,10 @@
     var list = $('bonusList');
     list.innerHTML = '';
 
-    var items = []
-      .concat(d.gratitude.map(function (e) { return { kind: 'gratitude', e: e }; }))
-      .concat(d.journal.map(function (e) { return { kind: 'journal', e: e }; }))
+    // journal entries are filed straight into the archive, so only gratitude
+    // is listed here; the Journal button and its count still show the day's state
+    var items = d.gratitude
+      .map(function (e) { return { kind: 'gratitude', e: e }; })
       .filter(function (it) { return matches(it.e.text); })
       .sort(function (a, b) { return b.e.ts - a.e.ts; });
 
@@ -1012,8 +1013,8 @@
     $('journalBtn').addEventListener('click', function () {
       openModal('Add Journal', '', function (val) {
         day(keyOf(viewDate)).journal.push({ id: uid(), text: val, ts: Date.now() });
-        save(); renderBonus(); renderChart(); renderHeader();
-        toast('Journal added +1');
+        save(); renderBonus(); renderChart(); renderHeader(); refreshSheet();
+        toast('Journal saved to the archive');
       });
     });
 

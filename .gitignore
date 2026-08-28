@@ -21,3 +21,4 @@ node_modules/
 .icons.mjs
 .ios.mjs
 .aff*.mjs
+.jr.mjs
