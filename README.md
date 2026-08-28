@@ -39,6 +39,11 @@ you're viewing; every past day is in the archives under the menu, newest first.
 - Use `‹` / `›` to look at — and back-fill — previous days. Tap the date to jump
   back to today.
 
+**My Affirmations** — one standing block of text on the home screen. It grows to
+fit whatever you write, so the whole thing stays visible with no inner scrollbar
+and nothing cut off. It saves as you type and is never archived or reset — it is
+the one part of the app that simply stays put.
+
 **Goals** — type a goal, tag it to a pillar, check it off when it's done, edit or
 delete it later. The home screen shows the current week; once a new week starts
 (weeks run Sunday to Saturday) earlier goals move out of the way into the

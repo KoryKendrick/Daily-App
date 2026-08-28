@@ -20,3 +20,4 @@ node_modules/
 .learn*.mjs
 .icons.mjs
 .ios.mjs
+.aff*.mjs

@@ -6,7 +6,7 @@
   'use strict';
 
   var STORE_KEY = 'dailyApp.v1';
-  var APP_VERSION = '2026.08.27.10';
+  var APP_VERSION = '2026.08.28.1';
 
   /* ---------------- pillar / task definitions ---------------- */
   var PILLARS = [
@@ -80,9 +80,10 @@
   function blankState() {
     return {
       profile: { name: '' },
-      days: {},      // key -> { tasks: {}, gratitude: [], journal: [] }
+      days: {},      // key -> { tasks: {}, gratitude: [], journal: [], learn: [] }
       goals: [],
-      prayers: []
+      prayers: [],
+      affirmations: ''
     };
   }
 
@@ -96,7 +97,8 @@
         profile: Object.assign(base.profile, parsed.profile || {}),
         days: parsed.days || {},
         goals: Array.isArray(parsed.goals) ? parsed.goals : [],
-        prayers: Array.isArray(parsed.prayers) ? parsed.prayers : []
+        prayers: Array.isArray(parsed.prayers) ? parsed.prayers : [],
+        affirmations: typeof parsed.affirmations === 'string' ? parsed.affirmations : ''
       };
     } catch (e) {
       return blankState();
@@ -608,6 +610,39 @@
       });
   }
 
+  /* ---------------- affirmations ----------------
+     One standing block of text, kept as typed and never archived. */
+
+  function fitAffirmations() {
+    var ta = $('affirmationsInput');
+    var cs = getComputedStyle(ta);
+    // with border-box the border is not part of scrollHeight, so add it back
+    // or the final line gets shaved
+    var borders = parseFloat(cs.borderTopWidth) + parseFloat(cs.borderBottomWidth);
+    ta.style.height = 'auto';
+    ta.style.height = (ta.scrollHeight + borders) + 'px';   // every line visible, no scrollbar
+  }
+
+  var affirmationsTimer = null;
+
+  function saveAffirmations() {
+    clearTimeout(affirmationsTimer);
+    affirmationsTimer = null;
+    var val = $('affirmationsInput').value;
+    if (val === state.affirmations) return;
+    state.affirmations = val;
+    save();
+    $('affirmationsMeta').textContent = 'Saved';
+  }
+
+  function renderAffirmations() {
+    var ta = $('affirmationsInput');
+    // don't yank text out from under someone mid-sentence
+    if (document.activeElement !== ta) ta.value = state.affirmations || '';
+    $('affirmationsMeta').textContent = state.affirmations ? 'Saved' : '';
+    fitAffirmations();
+  }
+
   /* ---------------- menu and logs ----------------
      The sheet stacks: Menu -> a log. Back steps up one level. */
 
@@ -842,6 +877,7 @@
     renderDateNav();
     renderPillars();
     renderBonus();
+    renderAffirmations();
     renderGoals();
     renderPrayers();
     refreshSheet();
@@ -926,7 +962,8 @@
       profile: Object.assign(blankState().profile, parsed.profile || {}),
       days: parsed.days || {},
       goals: Array.isArray(parsed.goals) ? parsed.goals : [],
-      prayers: Array.isArray(parsed.prayers) ? parsed.prayers : []
+      prayers: Array.isArray(parsed.prayers) ? parsed.prayers : [],
+      affirmations: typeof parsed.affirmations === 'string' ? parsed.affirmations : ''
     };
     save();
     renderAll();
@@ -1024,6 +1061,22 @@
       $('prayerTitle').value = '';
       save(); renderPrayers(); toast('Prayer saved \u{1F64F}');
     });
+
+    var affirmations = $('affirmationsInput');
+    affirmations.addEventListener('input', function () {
+      fitAffirmations();
+      $('affirmationsMeta').textContent = 'Saving\u2026';
+      clearTimeout(affirmationsTimer);
+      affirmationsTimer = setTimeout(saveAffirmations, 400);
+    });
+    // flush the last keystrokes if the app is closed or backgrounded quickly
+    affirmations.addEventListener('blur', saveAffirmations);
+    window.addEventListener('pagehide', saveAffirmations);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') saveAffirmations();
+    });
+    // rewrapping on rotation changes how tall the text needs to be
+    window.addEventListener('resize', fitAffirmations);
 
     $('searchInput').addEventListener('input', function (e) {
       query = e.target.value.trim().toLowerCase();

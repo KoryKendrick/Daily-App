@@ -630,3 +630,13 @@ button { cursor: pointer; }
   font-size: 12px; color: var(--text-faint);
   margin: 22px 0 4px;
 }
+
+/* ------------------------- affirmations -------------------------
+   Grows to fit whatever is typed: no inner scrollbar, no clipping,
+   the whole text stays on the page. Height is set from JS. */
+#affirmationsInput {
+  resize: none;
+  overflow: hidden;
+  min-height: 84px;
+  line-height: 1.5;
+}
