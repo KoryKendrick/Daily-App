@@ -6,7 +6,7 @@
   'use strict';
 
   var STORE_KEY = 'dailyApp.v1';
-  var APP_VERSION = '2026.08.28.2';
+  var APP_VERSION = '2026.08.28.3';
 
   /* ---------------- pillar / task definitions ---------------- */
   var PILLARS = [
@@ -313,31 +313,43 @@
 
   /* A task with `note` is only done once something is written for that day.
      Re-opening it shows what was written, so it can be edited or removed. */
-  function openNoteTask(pillarId, task) {
+  function openDailyEntry(store, opts) {
     var key = keyOf(viewDate);
     var d = day(key);
-    var id = pillarId + '.' + task.id;
-    var existing = d[task.note][0];
+    var existing = d[store][0];
 
-    openModal('What did you learn today?', existing ? existing.text : '', function (val) {
-      if (existing) {
-        existing.text = val;
-      } else {
-        d[task.note].push({ id: uid(), text: val, ts: Date.now() });
-      }
-      d.tasks[id] = true;
-      save(); renderPillars(); renderChart(); renderHeader(); refreshSheet();
-      toast(existing ? 'Learning updated' : 'Learning saved');
+    function after() {
+      save(); renderPillars(); renderBonus(); renderChart(); renderHeader(); refreshSheet();
+    }
+
+    openModal(opts.title, existing ? existing.text : '', function (val) {
+      if (existing) existing.text = val;
+      else d[store].push({ id: uid(), text: val, ts: Date.now() });
+      if (opts.taskId) d.tasks[opts.taskId] = true;
+      after();
+      toast(existing ? opts.updated : opts.saved);
     }, {
-      placeholder: 'What did you learn today?',
+      placeholder: opts.placeholder,
       saveLabel: existing ? 'Update' : 'Save',
       extraLabel: existing ? 'Remove' : '',
       onExtra: function () {
-        d[task.note] = [];
-        delete d.tasks[id];
-        save(); closeModal(); renderPillars(); renderChart(); renderHeader(); refreshSheet();
-        toast('Learning removed');
+        d[store] = [];
+        if (opts.taskId) delete d.tasks[opts.taskId];
+        closeModal();
+        after();
+        toast(opts.removed);
       }
+    });
+  }
+
+  function openNoteTask(pillarId, task) {
+    openDailyEntry(task.note, {
+      taskId: pillarId + '.' + task.id,
+      title: 'What did you learn today?',
+      placeholder: 'What did you learn today?',
+      saved: 'Learning saved',
+      updated: 'Learning updated',
+      removed: 'Learning removed'
     });
   }
 
@@ -385,7 +397,7 @@
 
   /* ---------------- shared entry rows ---------------- */
 
-  var ENTRY_LABEL = { gratitude: 'Gratitude', journal: 'Journal', learn: 'Learn' };
+  var ENTRY_LABEL = { gratitude: 'Affirmations', journal: 'Journal', learn: 'Learn' };
   var ENTRY_TAG = { gratitude: 'family', journal: 'finance', learn: 'finance' };
 
   function bonusEntryNode(kind, entry, dayKey, onChange) {
@@ -535,21 +547,8 @@
     $('journalBtn').classList.toggle('done', hasJournal);
     $('journalBtn').setAttribute('aria-pressed', hasJournal ? 'true' : 'false');
 
-    var list = $('bonusList');
-    list.innerHTML = '';
-
-    // journal entries are filed straight into the archive, so only gratitude
-    // is listed here; the Journal button and its count still show the day's state
-    var items = d.gratitude
-      .map(function (e) { return { kind: 'gratitude', e: e }; })
-      .filter(function (it) { return matches(it.e.text); })
-      .sort(function (a, b) { return b.e.ts - a.e.ts; });
-
-    items.forEach(function (it) {
-      list.appendChild(bonusEntryNode(it.kind, it.e, key, function () {
-        renderBonus(); renderChart(); renderHeader();
-      }));
-    });
+    // both are filed straight into their archives; the lit buttons and their
+    // counts are what show the day's state here
   }
 
   function matches(text) {
@@ -650,7 +649,7 @@
   var LOGS = {
     goals:     { title: 'Goals Log',         period: 'week' },
     prayers:   { title: 'Prayer Log',        period: 'week' },
-    gratitude: { title: 'Gratitude Archive', period: 'day', kinds: ['gratitude'] },
+    gratitude: { title: 'Daily Affirmations', period: 'day', kinds: ['gratitude'] },
     journal:   { title: 'Journal Archive',   period: 'day', kinds: ['journal'] },
     learn:     { title: 'Learn Log',         period: 'day', kinds: ['learn'] },
     bonus:     { title: 'Bonus Archive',     period: 'day', kinds: ['gratitude', 'journal'] }
@@ -749,7 +748,7 @@
     var list2 = el('div', 'menu-list');
     var g = bonusTotals('gratitude'), jr = bonusTotals('journal');
 
-    list2.appendChild(menuItem('&#10084;&#65039;', 'Gratitude Archive',
+    list2.appendChild(menuItem('&#10084;&#65039;', 'Daily Affirmations',
       plural(g.entries, 'entry', 'entries') + ' · ' + plural(g.days, 'day', 'days'),
       function () { openSheet({ type: 'log', log: 'gratitude' }); }));
 
@@ -1003,10 +1002,12 @@
     });
 
     $('gratitudeBtn').addEventListener('click', function () {
-      openModal('Add Gratitude', '', function (val) {
-        day(keyOf(viewDate)).gratitude.push({ id: uid(), text: val, ts: Date.now() });
-        save(); renderBonus(); renderChart(); renderHeader();
-        toast('Gratitude added +1');
+      openDailyEntry('gratitude', {
+        title: '3 daily affirmations',
+        placeholder: '1.\n2.\n3.',
+        saved: 'Affirmations saved',
+        updated: 'Affirmations updated',
+        removed: 'Affirmations removed'
       });
     });
 
