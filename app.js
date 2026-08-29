@@ -6,7 +6,7 @@
   'use strict';
 
   var STORE_KEY = 'dailyApp.v1';
-  var APP_VERSION = '2026.08.29.4';
+  var APP_VERSION = '2026.08.29.5';
 
   /* ---------------- pillar / task definitions ---------------- */
   var PILLARS = [
@@ -816,10 +816,11 @@
     var list3 = el('div', 'menu-list');
     list3.appendChild(menuItem('&#128100;', 'Your name', state.profile.name || 'Not set', editName));
 
+    body.appendChild(list3);
+
     var version = el('div', 'menu-version');
     version.textContent = 'Version ' + APP_VERSION;
     body.appendChild(version);
-    body.appendChild(list3);
   }
 
   function setName(name) {

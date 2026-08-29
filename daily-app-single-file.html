@@ -606,8 +606,8 @@ button { cursor: pointer; }
   display: grid; place-items: center; font-size: 17px;
 }
 .menu-label { flex: 1 1 auto; min-width: 0; }
-.menu-title { font-weight: 700; font-size: 15px; }
-.menu-sub { font-size: 12.5px; color: var(--text-faint); margin-top: 2px; }
+.menu-title { display: block; font-weight: 700; font-size: 15px; }
+.menu-sub { display: block; font-size: 12.5px; color: var(--text-faint); margin-top: 3px; }
 .menu-chev { color: var(--text-faint); font-size: 19px; flex: 0 0 auto; }
 
 .menu-section-title {
@@ -856,7 +856,7 @@ button { cursor: pointer; }
   'use strict';
 
   var STORE_KEY = 'dailyApp.v1';
-  var APP_VERSION = '2026.08.29.4';
+  var APP_VERSION = '2026.08.29.5';
 
   /* ---------------- pillar / task definitions ---------------- */
   var PILLARS = [
@@ -1666,10 +1666,11 @@ button { cursor: pointer; }
     var list3 = el('div', 'menu-list');
     list3.appendChild(menuItem('&#128100;', 'Your name', state.profile.name || 'Not set', editName));
 
+    body.appendChild(list3);
+
     var version = el('div', 'menu-version');
     version.textContent = 'Version ' + APP_VERSION;
     body.appendChild(version);
-    body.appendChild(list3);
   }
 
   function setName(name) {
