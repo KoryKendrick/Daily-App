@@ -30,3 +30,4 @@ node_modules/
 .arch.mjs
 .rest*.mjs
 .menu.mjs
+.sticky*.mjs

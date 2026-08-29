@@ -6,7 +6,7 @@
   'use strict';
 
   var STORE_KEY = 'dailyApp.v1';
-  var APP_VERSION = '2026.08.29.5';
+  var APP_VERSION = '2026.08.29.6';
 
   /* ---------------- pillar / task definitions ---------------- */
   var PILLARS = [
@@ -1137,6 +1137,12 @@
     });
 
     document.querySelector('.who').addEventListener('click', editName);
+
+    // a hairline appears under the header once the page scrolls beneath it
+    var header = document.querySelector('.app-header');
+    var markStuck = function () { header.classList.toggle('stuck', window.scrollY > 2); };
+    window.addEventListener('scroll', markStuck, { passive: true });
+    markStuck();
 
     $('sheetBack').addEventListener('click', sheetBack);
     $('sheetClose').addEventListener('click', closeSheet);

@@ -50,11 +50,25 @@ button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
 
 /* ------------------------- header ------------------------- */
+/* Pinned to the top: the name, points and streak stay in view while the
+   rest of the page scrolls under it. */
 .app-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 16px 2px 12px;
+  /* the negative margin lets the background cover the page gutters */
+  margin: 0 -14px;
+  padding: calc(16px + env(safe-area-inset-top, 0px)) 16px 12px;
+  background: var(--bg);
+  border-bottom: 1px solid transparent;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.app-header.stuck {
+  border-bottom-color: var(--line);
+  box-shadow: 0 6px 16px -12px #000;
 }
 
 .menu-btn {
