@@ -6,7 +6,7 @@
   'use strict';
 
   var STORE_KEY = 'dailyApp.v1';
-  var APP_VERSION = '2026.08.29.3';
+  var APP_VERSION = '2026.08.29.4';
 
   /* ---------------- pillar / task definitions ---------------- */
   var PILLARS = [
@@ -488,6 +488,12 @@
     return li;
   }
 
+  /* A prayer shows on the home screen when it is not archived and its day —
+     the day it was written, or the day it was last restored — is today. */
+  function prayerOnToday(p) {
+    return !p.archived && keyOf(new Date(p.restoredAt || p.ts)) === keyOf(new Date());
+  }
+
   function prayerEntryNode(p, onChange, opts) {
     opts = opts || {};
     // 'plain' keeps the title readable when checked: no strike-through
@@ -527,7 +533,7 @@
     });
     actions.appendChild(edit);
 
-    if (!opts.archive && p.archived) {
+    if (!opts.archive && !prayerOnToday(p)) {
       var restore = el('button', 'mini-btn restore');
       restore.type = 'button';
       restore.textContent = 'Restore';
@@ -622,11 +628,7 @@
     var list = $('prayerList');
     list.innerHTML = '';
 
-    var todayKey = keyOf(new Date());
-    var today = state.prayers.filter(function (p) {
-      // a restored prayer joins today's list; its log entry keeps its own date
-      return !p.archived && keyOf(new Date(p.restoredAt || p.ts)) === todayKey;
-    });
+    var today = state.prayers.filter(prayerOnToday);
     var visible = today.filter(function (p) { return matches(p.title) || matches(p.text); });
     var checked = today.filter(function (p) { return p.answered; }).length;
     $('prayerMeta').textContent = checked + '/' + today.length + ' today';
