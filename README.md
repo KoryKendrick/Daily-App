@@ -56,10 +56,11 @@ delete it later. The home screen shows the current week; once a new week starts
 (weeks run Sunday to Saturday) earlier goals move out of the way into the
 **Goals Log** in the menu, grouped by week, newest first, and kept forever.
 
-**Prayers** — write a prayer with an optional "who/what", mark it answered when
-it is, and keep the whole list as a record. Like goals, the home screen shows
-this week and everything older lives in the **Prayer Log** in the menu. Archived
-prayers stay editable, so one answered months later can still be marked.
+**Prayers** — write a prayer with an optional "who/what" and check it off as you
+pray it. A checked prayer is highlighted but stays fully readable — no
+strike-through, no badge. The section runs a day at a time: the home screen
+shows today, and every earlier day is in the **Prayer Log** in the menu, grouped
+by day, newest first, and kept forever. Prayers stay editable there.
 
 **Menu** (the ☰ button) holds the Prayer Log, Goals Log, Gratitude Archive,
 Journal Archive and Learn Log, plus your name — blank on a new install until you set it there,

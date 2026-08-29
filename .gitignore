@@ -26,3 +26,4 @@ node_modules/
 .tab.mjs
 .g.mjs
 .gr.mjs
+.pr.mjs

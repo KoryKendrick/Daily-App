@@ -6,7 +6,7 @@
   'use strict';
 
   var STORE_KEY = 'dailyApp.v1';
-  var APP_VERSION = '2026.08.28.6';
+  var APP_VERSION = '2026.08.29.1';
 
   /* ---------------- pillar / task definitions ---------------- */
   var PILLARS = [
@@ -479,18 +479,18 @@
   }
 
   function prayerEntryNode(p, onChange) {
-    var li = el('li', 'entry' + (p.answered ? ' done' : ''));
+    // 'plain' keeps the title readable when checked: no strike-through
+    var li = el('li', 'entry plain' + (p.answered ? ' done' : ''));
 
     var chk = el('button', 'entry-check');
     chk.type = 'button';
-    chk.setAttribute('aria-label', 'Mark prayer answered');
+    chk.setAttribute('aria-label', 'Check off prayer');
     chk.setAttribute('aria-pressed', p.answered ? 'true' : 'false');
     chk.innerHTML = CHECK_SVG;
     chk.addEventListener('click', function () {
       p.answered = !p.answered;
       p.answeredAt = p.answered ? Date.now() : null;
       save(); onChange();
-      if (p.answered) toast('Marked answered \u{1F64F}');
     });
 
     var main = el('div', 'entry-main');
@@ -504,8 +504,7 @@
     main.appendChild(body);
 
     var meta = el('div', 'entry-meta');
-    meta.innerHTML = '<span>' + fmtShort(p.ts) + '</span>' +
-      (p.answered && p.answeredAt ? '<span class="tag answered">answered ' + fmtShort(p.answeredAt) + '</span>' : '');
+    meta.innerHTML = '<span>' + fmtShort(p.ts) + '</span>';
     main.appendChild(meta);
 
     var actions = el('div', 'entry-actions');
@@ -583,22 +582,23 @@
       });
   }
 
-  /* ---------------- prayers (this week) ---------------- */
+  /* ---------------- prayers (today) ---------------- */
   function renderPrayers() {
     var list = $('prayerList');
     list.innerHTML = '';
 
-    var week = state.prayers.filter(function (p) { return inCurrentWeek(p.ts); });
-    var visible = week.filter(function (p) { return matches(p.title) || matches(p.text); });
-    var answered = week.filter(function (p) { return p.answered; }).length;
-    $('prayerMeta').textContent = answered + ' answered · ' + week.length + ' this week';
+    var todayKey = keyOf(new Date());
+    var today = state.prayers.filter(function (p) { return keyOf(new Date(p.ts)) === todayKey; });
+    var visible = today.filter(function (p) { return matches(p.title) || matches(p.text); });
+    var checked = today.filter(function (p) { return p.answered; }).length;
+    $('prayerMeta').textContent = checked + '/' + today.length + ' today';
 
     if (!visible.length) {
       var e = el('li');
-      e.innerHTML = '<div class="empty">' + (week.length
+      e.innerHTML = '<div class="empty">' + (today.length
         ? 'No prayers match your search.'
         : (state.prayers.length
-            ? 'No prayers yet this week — earlier ones are in the Prayer Log.'
+            ? 'No prayers yet today — earlier ones are in the Prayer Log.'
             : 'No prayers yet — write one above.')) + '</div>';
       list.appendChild(e);
       return;
@@ -648,7 +648,7 @@
 
   var LOGS = {
     goals:     { title: 'Goals Log',         period: 'week' },
-    prayers:   { title: 'Prayer Log',        period: 'week' },
+    prayers:   { title: 'Prayer Log',        period: 'day' },
     gratitude: { title: 'Gratitude',         period: 'day', kinds: ['gratitude'] },
     journal:   { title: 'Journal Archive',   period: 'day', kinds: ['journal'] },
     learn:     { title: 'Learn Log',         period: 'day', kinds: ['learn'] },
@@ -705,6 +705,12 @@
     return b;
   }
 
+  function countDays(items, tsOf) {
+    var days = {};
+    items.forEach(function (i) { days[keyOf(new Date(tsOf(i)))] = true; });
+    return Object.keys(days).length;
+  }
+
   function countWeeks(items, tsOf) {
     var weeks = {};
     items.forEach(function (i) { weeks[weekKeyOf(tsOf(i))] = true; });
@@ -731,7 +737,7 @@
 
     list.appendChild(menuItem('&#128591;', 'Prayer Log',
       plural(state.prayers.length, 'prayer', 'prayers') + ' · ' +
-      plural(countWeeks(state.prayers, function (p) { return p.ts; }), 'week', 'weeks'),
+      plural(countDays(state.prayers, function (p) { return p.ts; }), 'day', 'days'),
       function () { openSheet({ type: 'log', log: 'prayers' }); }));
 
     list.appendChild(menuItem('&#127919;', 'Goals Log',
@@ -813,7 +819,7 @@
         .forEach(function (g) { put(weekKeyOf(g.createdAt), { ts: g.createdAt, goal: g }); });
     } else if (type === 'prayers') {
       state.prayers.filter(function (p) { return matches(p.title) || matches(p.text); })
-        .forEach(function (p) { put(weekKeyOf(p.ts), { ts: p.ts, prayer: p }); });
+        .forEach(function (p) { put(keyOf(new Date(p.ts)), { ts: p.ts, prayer: p }); });
     } else {
       Object.keys(state.days).forEach(function (dayKey) {
         cfg.kinds.forEach(function (kind) {
