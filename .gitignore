@@ -28,3 +28,4 @@ node_modules/
 .gr.mjs
 .pr.mjs
 .arch.mjs
+.rest*.mjs

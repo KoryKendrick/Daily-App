@@ -470,13 +470,14 @@ button { cursor: pointer; }
 .tag.finance { color: var(--lime-1); border-color: var(--lime-dim-1); }
 .tag.answered { color: var(--teal); border-color: rgba(79,209,165,.5); }
 
-.entry-actions { display: flex; gap: 4px; flex: 0 0 auto; }
+.entry-actions { display: flex; gap: 4px; flex: 0 0 auto; flex-wrap: wrap; justify-content: flex-end; }
 .mini-btn {
   background: none; border: 0; padding: 5px 7px; border-radius: 8px;
   color: var(--text-faint); font-size: 13px; font-weight: 700;
 }
 .mini-btn:hover { background: var(--card-2); color: var(--text); }
 .mini-btn.danger:hover { color: var(--danger); }
+.mini-btn.restore { color: var(--teal); }
 
 .empty {
   color: var(--text-faint); font-size: 14px; text-align: center;
@@ -855,7 +856,7 @@ button { cursor: pointer; }
   'use strict';
 
   var STORE_KEY = 'dailyApp.v1';
-  var APP_VERSION = '2026.08.29.2';
+  var APP_VERSION = '2026.08.29.3';
 
   /* ---------------- pillar / task definitions ---------------- */
   var PILLARS = [
@@ -1374,6 +1375,21 @@ button { cursor: pointer; }
     edit.addEventListener('click', function () {
       openModal('Edit prayer', p.text, function (val) { p.text = val; save(); onChange(); });
     });
+    actions.appendChild(edit);
+
+    if (!opts.archive && p.archived) {
+      var restore = el('button', 'mini-btn restore');
+      restore.type = 'button';
+      restore.textContent = 'Restore';
+      restore.addEventListener('click', function () {
+        // back onto today's list; the log keeps the day it was written
+        p.archived = false;
+        p.restoredAt = Date.now();
+        save(); onChange(); toast('Restored to the home screen');
+      });
+      actions.appendChild(restore);
+    }
+
     var act = el('button', 'mini-btn' + (opts.archive ? '' : ' danger'));
     act.type = 'button';
     act.textContent = opts.archive ? 'Archive' : 'Delete';
@@ -1388,7 +1404,7 @@ button { cursor: pointer; }
         save(); onChange(); toast('Prayer deleted');
       }
     });
-    actions.appendChild(edit); actions.appendChild(act);
+    actions.appendChild(act);
 
     li.appendChild(chk); li.appendChild(main); li.appendChild(actions);
     return li;
@@ -1457,7 +1473,10 @@ button { cursor: pointer; }
     list.innerHTML = '';
 
     var todayKey = keyOf(new Date());
-    var today = state.prayers.filter(function (p) { return !p.archived && keyOf(new Date(p.ts)) === todayKey; });
+    var today = state.prayers.filter(function (p) {
+      // a restored prayer joins today's list; its log entry keeps its own date
+      return !p.archived && keyOf(new Date(p.restoredAt || p.ts)) === todayKey;
+    });
     var visible = today.filter(function (p) { return matches(p.title) || matches(p.text); });
     var checked = today.filter(function (p) { return p.answered; }).length;
     $('prayerMeta').textContent = checked + '/' + today.length + ' today';

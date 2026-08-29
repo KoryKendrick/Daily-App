@@ -6,7 +6,7 @@
   'use strict';
 
   var STORE_KEY = 'dailyApp.v1';
-  var APP_VERSION = '2026.08.29.2';
+  var APP_VERSION = '2026.08.29.3';
 
   /* ---------------- pillar / task definitions ---------------- */
   var PILLARS = [
@@ -525,6 +525,21 @@
     edit.addEventListener('click', function () {
       openModal('Edit prayer', p.text, function (val) { p.text = val; save(); onChange(); });
     });
+    actions.appendChild(edit);
+
+    if (!opts.archive && p.archived) {
+      var restore = el('button', 'mini-btn restore');
+      restore.type = 'button';
+      restore.textContent = 'Restore';
+      restore.addEventListener('click', function () {
+        // back onto today's list; the log keeps the day it was written
+        p.archived = false;
+        p.restoredAt = Date.now();
+        save(); onChange(); toast('Restored to the home screen');
+      });
+      actions.appendChild(restore);
+    }
+
     var act = el('button', 'mini-btn' + (opts.archive ? '' : ' danger'));
     act.type = 'button';
     act.textContent = opts.archive ? 'Archive' : 'Delete';
@@ -539,7 +554,7 @@
         save(); onChange(); toast('Prayer deleted');
       }
     });
-    actions.appendChild(edit); actions.appendChild(act);
+    actions.appendChild(act);
 
     li.appendChild(chk); li.appendChild(main); li.appendChild(actions);
     return li;
@@ -608,7 +623,10 @@
     list.innerHTML = '';
 
     var todayKey = keyOf(new Date());
-    var today = state.prayers.filter(function (p) { return !p.archived && keyOf(new Date(p.ts)) === todayKey; });
+    var today = state.prayers.filter(function (p) {
+      // a restored prayer joins today's list; its log entry keeps its own date
+      return !p.archived && keyOf(new Date(p.restoredAt || p.ts)) === todayKey;
+    });
     var visible = today.filter(function (p) { return matches(p.title) || matches(p.text); });
     var checked = today.filter(function (p) { return p.answered; }).length;
     $('prayerMeta').textContent = checked + '/' + today.length + ' today';

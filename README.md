@@ -62,7 +62,9 @@ which is the only thing that removes an entry permanently. The home screen shows
 pray it. A checked prayer is highlighted but stays fully readable — no
 strike-through, no badge. The section runs a day at a time: the home screen
 shows today, and every earlier day is in the **Prayer Log** in the menu, grouped
-by day, newest first, and kept forever. Prayers stay editable there.
+by day, newest first, and kept forever. Prayers stay editable there, and an
+archived one has a **Restore** button that puts it back on today's list. Its log
+entry keeps the day it was written, so the record stays honest.
 
 **Menu** (the ☰ button) holds the Prayer Log, Goals Log, Gratitude Archive,
 Journal Archive and Learn Log, plus your name — blank on a new install until you set it there,
