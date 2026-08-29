@@ -51,8 +51,10 @@ fit whatever you write, so the whole thing stays visible with no inner scrollbar
 and nothing cut off. It saves as you type and is never archived or reset — it is
 the one part of the app that simply stays put.
 
-**Goals** — type a goal, tag it to a pillar, check it off when it's done, edit or
-delete it later. The home screen shows the current week; once a new week starts
+**Goals** — type a goal, tag it to a pillar, check it off when it's done, edit it
+later, or **Archive** it. Archiving takes a goal off the home screen and keeps it
+in the log for good — nothing is destroyed. Inside a log, the button is *Delete*,
+which is the only thing that removes an entry permanently. The home screen shows the current week; once a new week starts
 (weeks run Sunday to Saturday) earlier goals move out of the way into the
 **Goals Log** in the menu, grouped by week, newest first, and kept forever.
 

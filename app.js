@@ -6,7 +6,7 @@
   'use strict';
 
   var STORE_KEY = 'dailyApp.v1';
-  var APP_VERSION = '2026.08.29.1';
+  var APP_VERSION = '2026.08.29.2';
 
   /* ---------------- pillar / task definitions ---------------- */
   var PILLARS = [
@@ -437,7 +437,8 @@
     return li;
   }
 
-  function goalEntryNode(g, onChange) {
+  function goalEntryNode(g, onChange, opts) {
+    opts = opts || {};
     var li = el('li', 'entry' + (g.done ? ' done' : ''));
 
     var chk = el('button', 'entry-check');
@@ -457,7 +458,8 @@
     var meta = el('div', 'entry-meta');
     meta.innerHTML = '<span class="tag ' + escapeHtml(g.pillar) + '">' + escapeHtml(g.pillar) + '</span>' +
       '<span>Added ' + fmtShort(g.createdAt) + '</span>' +
-      (g.done && g.completedAt ? '<span class="tag answered">done ' + fmtShort(g.completedAt) + '</span>' : '');
+      (g.done && g.completedAt ? '<span class="tag answered">done ' + fmtShort(g.completedAt) + '</span>' : '') +
+      (g.archived ? '<span class="tag">archived</span>' : '');
     main.appendChild(title); main.appendChild(meta);
 
     var actions = el('div', 'entry-actions');
@@ -466,19 +468,28 @@
     edit.addEventListener('click', function () {
       openModal('Edit goal', g.text, function (val) { g.text = val; save(); onChange(); });
     });
-    var del = el('button', 'mini-btn danger');
-    del.type = 'button'; del.textContent = 'Delete';
-    del.addEventListener('click', function () {
-      state.goals = state.goals.filter(function (x) { return x.id !== g.id; });
-      save(); onChange(); toast('Goal deleted');
+    var act = el('button', 'mini-btn' + (opts.archive ? '' : ' danger'));
+    act.type = 'button';
+    act.textContent = opts.archive ? 'Archive' : 'Delete';
+    act.addEventListener('click', function () {
+      if (opts.archive) {
+        // off the home screen, kept in the Goals Log for good
+        g.archived = true;
+        g.archivedAt = Date.now();
+        save(); onChange(); toast('Archived to the Goals Log');
+      } else {
+        state.goals = state.goals.filter(function (x) { return x.id !== g.id; });
+        save(); onChange(); toast('Goal deleted');
+      }
     });
-    actions.appendChild(edit); actions.appendChild(del);
+    actions.appendChild(edit); actions.appendChild(act);
 
     li.appendChild(chk); li.appendChild(main); li.appendChild(actions);
     return li;
   }
 
-  function prayerEntryNode(p, onChange) {
+  function prayerEntryNode(p, onChange, opts) {
+    opts = opts || {};
     // 'plain' keeps the title readable when checked: no strike-through
     var li = el('li', 'entry plain' + (p.answered ? ' done' : ''));
 
@@ -504,7 +515,8 @@
     main.appendChild(body);
 
     var meta = el('div', 'entry-meta');
-    meta.innerHTML = '<span>' + fmtShort(p.ts) + '</span>';
+    meta.innerHTML = '<span>' + fmtShort(p.ts) + '</span>' +
+      (p.archived ? '<span class="tag">archived</span>' : '');
     main.appendChild(meta);
 
     var actions = el('div', 'entry-actions');
@@ -513,13 +525,21 @@
     edit.addEventListener('click', function () {
       openModal('Edit prayer', p.text, function (val) { p.text = val; save(); onChange(); });
     });
-    var del = el('button', 'mini-btn danger');
-    del.type = 'button'; del.textContent = 'Delete';
-    del.addEventListener('click', function () {
-      state.prayers = state.prayers.filter(function (x) { return x.id !== p.id; });
-      save(); onChange(); toast('Prayer deleted');
+    var act = el('button', 'mini-btn' + (opts.archive ? '' : ' danger'));
+    act.type = 'button';
+    act.textContent = opts.archive ? 'Archive' : 'Delete';
+    act.addEventListener('click', function () {
+      if (opts.archive) {
+        // off the home screen, kept in the Prayer Log for good
+        p.archived = true;
+        p.archivedAt = Date.now();
+        save(); onChange(); toast('Archived to the Prayer Log');
+      } else {
+        state.prayers = state.prayers.filter(function (x) { return x.id !== p.id; });
+        save(); onChange(); toast('Prayer deleted');
+      }
     });
-    actions.appendChild(edit); actions.appendChild(del);
+    actions.appendChild(edit); actions.appendChild(act);
 
     li.appendChild(chk); li.appendChild(main); li.appendChild(actions);
     return li;
@@ -560,7 +580,7 @@
     var list = $('goalList');
     list.innerHTML = '';
 
-    var week = state.goals.filter(function (g) { return inCurrentWeek(g.createdAt); });
+    var week = state.goals.filter(function (g) { return !g.archived && inCurrentWeek(g.createdAt); });
     var visible = week.filter(function (g) { return matches(g.text) || matches(g.pillar); });
     var doneCount = week.filter(function (g) { return g.done; }).length;
     $('goalMeta').textContent = doneCount + '/' + week.length + ' this week';
@@ -570,7 +590,7 @@
       e.innerHTML = '<div class="empty">' + (week.length
         ? 'No goals match your search.'
         : (state.goals.length
-            ? 'No goals yet this week — earlier ones are in the Goals Log.'
+            ? 'Nothing here right now — your goals are in the Goals Log.'
             : 'No goals yet — type one above to get started.')) + '</div>';
       list.appendChild(e);
       return;
@@ -578,7 +598,7 @@
 
     visible.slice().sort(function (a, b) { return b.createdAt - a.createdAt; })
       .forEach(function (g) {
-        list.appendChild(goalEntryNode(g, function () { renderGoals(); refreshSheet(); }));
+        list.appendChild(goalEntryNode(g, function () { renderGoals(); refreshSheet(); }, { archive: true }));
       });
   }
 
@@ -588,7 +608,7 @@
     list.innerHTML = '';
 
     var todayKey = keyOf(new Date());
-    var today = state.prayers.filter(function (p) { return keyOf(new Date(p.ts)) === todayKey; });
+    var today = state.prayers.filter(function (p) { return !p.archived && keyOf(new Date(p.ts)) === todayKey; });
     var visible = today.filter(function (p) { return matches(p.title) || matches(p.text); });
     var checked = today.filter(function (p) { return p.answered; }).length;
     $('prayerMeta').textContent = checked + '/' + today.length + ' today';
@@ -598,7 +618,7 @@
       e.innerHTML = '<div class="empty">' + (today.length
         ? 'No prayers match your search.'
         : (state.prayers.length
-            ? 'No prayers yet today — earlier ones are in the Prayer Log.'
+            ? 'Nothing here right now — your prayers are in the Prayer Log.'
             : 'No prayers yet — write one above.')) + '</div>';
       list.appendChild(e);
       return;
@@ -606,7 +626,7 @@
 
     visible.slice().sort(function (a, b) { return b.ts - a.ts; })
       .forEach(function (p) {
-        list.appendChild(prayerEntryNode(p, function () { renderPrayers(); refreshSheet(); }));
+        list.appendChild(prayerEntryNode(p, function () { renderPrayers(); refreshSheet(); }, { archive: true }));
       });
   }
 

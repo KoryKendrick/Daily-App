@@ -27,3 +27,4 @@ node_modules/
 .g.mjs
 .gr.mjs
 .pr.mjs
+.arch.mjs
